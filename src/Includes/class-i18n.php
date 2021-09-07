@@ -8,11 +8,11 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    BH_WC_Duplicate_Gateway
- * @subpackage BH_WC_Duplicate_Gateway/includes
+ * @package    BH_WC_Duplicate_Payment_Gateways
+ * @subpackage BH_WC_Duplicate_Payment_Gateways/includes
  */
 
-namespace BH_WC_Duplicate_Gateway\Includes;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes;
 
 /**
  * Define the internationalization functionality.
@@ -21,8 +21,8 @@ namespace BH_WC_Duplicate_Gateway\Includes;
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    BH_WC_Duplicate_Gateway
- * @subpackage BH_WC_Duplicate_Gateway/includes
+ * @package    BH_WC_Duplicate_Payment_Gateways
+ * @subpackage BH_WC_Duplicate_Payment_Gateways/includes
  * @author     BrianHenryIE <BrianHenryIE@gmail.com>
  */
 class I18n {
@@ -37,9 +37,9 @@ class I18n {
 	public function load_plugin_textdomain(): void {
 
 		load_plugin_textdomain(
-			'bh-wc-duplicate-gateway',
+			'bh-wc-duplicate-payment-gateways',
 			false,
-			dirname( plugin_basename( __FILE__ ), 2 ) . '/Languages/'
+			plugin_basename( dirname( __FILE__, 2 ) ) . '/languages/'
 		);
 
 	}

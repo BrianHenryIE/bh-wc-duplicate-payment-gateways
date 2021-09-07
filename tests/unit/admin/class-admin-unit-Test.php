@@ -4,16 +4,18 @@
  *
  * @see Admin
  *
- * @package bh-wc-duplicate-gateway
+ * @package bh-wc-duplicate-payment-gateways
  * @author Brian Henry <BrianHenryIE@gmail.com>
  */
 
-namespace BH_WC_Duplicate_Gateway\Admin;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
+
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
 
 /**
  * Class Admin_Test
  *
- * @covers \BH_WC_Duplicate_Gateway\Admin\Admin
+ * @coversDefaultClass \BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin
  */
 class Admin_Test extends \Codeception\Test\Unit {
 
@@ -28,24 +30,10 @@ class Admin_Test extends \Codeception\Test\Unit {
 	}
 
 	/**
-	 * The plugin name. Unlikely to change.
-	 *
-	 * @var string Plugin name.
-	 */
-	private $plugin_name = 'bh-wc-duplicate-gateway';
-
-	/**
-	 * The plugin version, matching the version these tests were written against.
-	 *
-	 * @var string Plugin version.
-	 */
-	private $version = '1.0.0';
-
-	/**
 	 * Verifies enqueue_styles() calls wp_enqueue_style() with appropriate parameters.
 	 * Verifies the .css file exists.
 	 *
-	 * @covers Admin::enqueue_styles
+	 * @covers ::enqueue_styles
 	 * @see wp_enqueue_style()
 	 */
 	public function test_enqueue_styles() {
@@ -60,17 +48,24 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-		$css_file = $plugin_root_dir . '/admin/css/bh-wc-duplicate-gateway-admin.css';
+		$css_file = $plugin_root_dir . '/admin/css/bh-wc-duplicate-payment-gateways-admin.css';
+
+        $plugin_name = 'bh-wc-duplicate-payment-gateways';
 
 		\WP_Mock::userFunction(
 			'wp_enqueue_style',
 			array(
 				'times' => 1,
-				'args'  => array( $this->plugin_name, $css_file, array(), $this->version, 'all' ),
+				'args'  => array( $plugin_name, $css_file, array(), '1.0.0', 'all' ),
 			)
 		);
 
-		$admin = new Admin();
+        $settings = $this->makeEmpty( Settings_Interface::class,
+        array(
+            'get_plugin_version' => '1.0.0'
+        ));
+
+		$admin = new Admin( $settings );
 
 		$admin->enqueue_styles();
 
@@ -81,7 +76,7 @@ class Admin_Test extends \Codeception\Test\Unit {
 	 * Verifies enqueue_scripts() calls wp_enqueue_script() with appropriate parameters.
 	 * Verifies the .js file exists.
 	 *
-	 * @covers Admin::enqueue_scripts
+	 * @covers ::enqueue_scripts
 	 * @see wp_enqueue_script()
 	 */
 	public function test_enqueue_scripts() {
@@ -96,10 +91,43 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-		$handle    = $this->plugin_name;
-		$src       = $plugin_root_dir . '/admin/js/bh-wc-duplicate-gateway-admin.js';
+        $nonce = 'abc123';
+
+        \WP_Mock::userFunction(
+            'wp_create_nonce',
+            array(
+                'args'  => array( AJAX::NONCE_ACTION ),
+                'return' => $nonce,
+            )
+        );
+
+        \WP_Mock::userFunction(
+            'admin_url',
+            array(
+                'args'  => array( 'admin-ajax.php' ),
+                'return_arg' => 0,
+            )
+        );
+
+        \WP_Mock::userFunction(
+            'wp_json_encode',
+            array(
+//                'args'  => array( \WP_Mock\Functions::type( 'array' ) ),
+                'return' => '{"json"=>"json"}',
+            )
+        );
+
+        \WP_Mock::userFunction(
+            'wp_add_inline_script',
+            array(
+                'args'  => array( 'bh-wc-duplicate-payment-gateways', \WP_Mock\Functions::type( 'string' ) ),
+            )
+        );
+
+		$handle    = 'bh-wc-duplicate-payment-gateways';
+		$src       = $plugin_root_dir . '/admin/js/bh-wc-duplicate-payment-gateways-admin.js';
 		$deps      = array( 'jquery' );
-		$ver       = $this->version;
+		$ver       = '1.0.0';
 		$in_footer = true;
 
 		\WP_Mock::userFunction(
@@ -110,7 +138,12 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-		$admin = new Admin( $this->plugin_name, $this->version );
+        $settings = $this->makeEmpty( Settings_Interface::class, array(
+            'get_plugin_version' => '1.0.0'
+        ));
+
+		$admin = new Admin( $settings );
+
 
 		$admin->enqueue_scripts();
 

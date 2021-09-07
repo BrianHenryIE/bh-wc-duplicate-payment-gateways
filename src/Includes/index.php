@@ -2,7 +2,7 @@
 /**
  * Silence is golden.
  *
- * @package    BH_WC_Duplicate_Gateway
+ * @package    BH_WC_Duplicate_Payment_Gateways
  */
 
 die();

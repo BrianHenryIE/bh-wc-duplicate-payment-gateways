@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file for wpunit tests. Since the plugin will not be otherwise autoloaded.
  *
- * @package           BH_WC_Duplicate_Gateway
+ * @package           BH_WC_Duplicate_Payment_Gateways
  */
 
 global $plugin_root_dir;

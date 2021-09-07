@@ -1,4 +1,4 @@
-=== Duplicate Gateway ===
+=== Duplicate Payment Gateways ===
 Contributors: (this should be a list of wordpress.org userid's)
 Donate link: http://example.com/
 Tags: comments, spam
@@ -44,7 +44,7 @@ This section describes how to install the plugin and get it working.
 
 e.g.
 
-1. Upload `bh-wc-duplicate-gateway.php` to the `/wp-content/plugins/` directory
+1. Upload `bh-wc-duplicate-payment-gateways.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Place `<?php do_action('plugin_snake_hook'); ?>` in your templates
 

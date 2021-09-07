@@ -21,7 +21,7 @@ class PluginsPageCest
 	 */
 	public function testPluginsPageForName( AcceptanceTester $I ) {
 
-		$I->canSee( 'BH WC Duplicate Gateway' );
+		$I->canSee( 'Duplicate Payment Gateways' );
 	}
 
 	/**

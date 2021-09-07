@@ -2,25 +2,25 @@
 /**
  *
  *
- * @package BH_WC_Duplicate_Gateway
+ * @package BH_WC_Duplicate_Payment_Gateways
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
-namespace BH_WC_Duplicate_Gateway\Includes;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes;
 
 /**
  * Class Plugin_WP_Mock_Test
  *
- * @covers \BH_WC_Duplicate_Gateway\Includes\I18n
+ * @coversDefaultClass  \BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes\I18n
  */
 class I18n_Unit_Test extends \Codeception\Test\Unit {
 
-	protected function _before() {
+	protected function setUp(): void {
 		\WP_Mock::setUp();
 	}
 
 	// This is required for `'times' => 1` to be verified.
-	protected function _tearDown() {
+	protected function tearDown(): void {
 		parent::_tearDown();
 		\WP_Mock::tearDown();
 	}
@@ -28,7 +28,7 @@ class I18n_Unit_Test extends \Codeception\Test\Unit {
 	/**
 	 * Verify load_plugin_textdomain is correctly called.
 	 *
-	 * @covers I18n::load_plugin_textdomain
+	 * @covers ::load_plugin_textdomain
 	 */
 	public function test_load_plugin_textdomain() {
 
@@ -38,7 +38,7 @@ class I18n_Unit_Test extends \Codeception\Test\Unit {
 			'load_plugin_textdomain',
 			array(
 				'args'   => array(
-					'bh-wc-duplicate-gateway',
+					'bh-wc-duplicate-payment-gateways',
 					false,
 					$plugin_root_dir . '/languages/',
 				)

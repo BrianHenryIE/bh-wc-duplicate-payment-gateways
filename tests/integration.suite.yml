@@ -17,7 +17,7 @@ modules:
             tablePrefix: "%TEST_TABLE_PREFIX%"
             domain: "%TEST_SITE_WP_DOMAIN%"
             adminEmail: "%TEST_SITE_ADMIN_EMAIL%"
-            title: "bh-wc-duplicate-gateway"
-            plugins: ['bh-wc-duplicate-gateway/bh-wc-duplicate-gateway.php']
-            activatePlugins: ['bh-wc-duplicate-gateway/bh-wc-duplicate-gateway.php']
+            title: "bh-wc-duplicate-payment-gateways"
+            plugins: ['bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php']
+            activatePlugins: ['bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php']
 bootstrap: _bootstrap.php

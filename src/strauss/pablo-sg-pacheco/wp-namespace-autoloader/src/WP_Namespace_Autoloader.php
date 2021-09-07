@@ -9,11 +9,15 @@
  *
  * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
  * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r
+ *
+ * @license GPLv2
+ * Modified by BrianHenryIE on 07-September-2021 using Strauss.
+ * @see https://github.com/BrianHenryIE/strauss
  */
 
-namespace BrianHenryIE\WC_Duplicate_Gateway\Pablo_Pacheco\WP_Namespace_Autoloader;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Pablo_Pacheco\WP_Namespace_Autoloader;
 
-if ( ! class_exists( '\BrianHenryIE\WC_Duplicate_Gateway\Pablo_Pacheco\WP_Namespace_Autoloader\WP_Namespace_Autoloader' ) ) {
+if ( ! class_exists( '\BrianHenryIE\WC_Duplicate_Payment_Gateways\Pablo_Pacheco\WP_Namespace_Autoloader\WP_Namespace_Autoloader' ) ) {
 	/**
 	 * Autoloader - Main class
 	 *

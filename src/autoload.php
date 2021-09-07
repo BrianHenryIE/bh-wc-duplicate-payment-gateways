@@ -6,14 +6,14 @@
  *
  * @link              http://example.com
  * @since             1.0.0
- * @package           BH_WC_Duplicate_Gateway
+ * @package           BH_WC_Duplicate_Payment_Gateways
  *
  * @see https://github.com/pablo-sg-pacheco/wp-namespace-autoloader/
  */
 
-namespace BH_WC_Duplicate_Gateway;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
-use BH_WC_Duplicate_Gateway\Pablo_Pacheco\WP_Namespace_Autoloader\WP_Namespace_Autoloader;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Pablo_Pacheco\WP_Namespace_Autoloader\WP_Namespace_Autoloader;
 
 require_once __DIR__ . '/strauss/autoload.php';
 

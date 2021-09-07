@@ -21,10 +21,13 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    BH_WC_Duplicate_Gateway
+ * @package    BH_WC_Duplicate_Payment_Gateways
  */
 
 // If uninstall not called from WordPress, then exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+
+delete_option( 'bh_wc_duplicate_payment_gateways' );

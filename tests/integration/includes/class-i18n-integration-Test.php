@@ -2,14 +2,14 @@
 /**
  * Tests for I18n. Tests load_plugin_textdomain.
  *
- * @package BH_WC_Duplicate_Gateway
+ * @package BH_WC_Duplicate_Payment_Gateways
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
-namespace BH_WC_Duplicate_Gateway\Includes;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes;
 
 /**
- * Class BH_WC_Duplicate_Gateway_Test
+ * Class BH_WC_Duplicate_Payment_Gateways_Test
  *
  * @see I18n
  */
@@ -30,7 +30,7 @@ class I18n_Integration_Test extends \Codeception\TestCase\WPTestCase {
 		$this->assertTrue( file_exists( $plugin_root_dir . '/Languages/' ), '/Languages/ folder does not exist.' );
 
 		// Seems to fail because there are no translations to load.
-		$this->assertTrue( is_textdomain_loaded( 'bh-wc-duplicate-gateway' ), 'i18n text domain not loaded.' );
+		$this->assertTrue( is_textdomain_loaded( 'bh-wc-duplicate-payment-gateways' ), 'i18n text domain not loaded.' );
 
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @package           BH_WC_Duplicate_Gateway
+ * @package           BH_WC_Duplicate_Payment_Gateways
  */
 
 $GLOBALS['project_root_dir']   = $project_root_dir  = dirname( __FILE__, 2 );

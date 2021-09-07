@@ -2,11 +2,11 @@
 /**
  * Tests for I18n. Tests load_plugin_textdomain.
  *
- * @package BH_WC_Duplicate_Gateway
+ * @package BH_WC_Duplicate_Payment_Gateways
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
-namespace BH_WC_Duplicate_Gateway\Includes;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes;
 
 /**
  * Class I18n_Test
@@ -40,7 +40,7 @@ class I18n_WP_Unit_Test extends \Codeception\TestCase\WPTestCase {
 		$i18n->load_plugin_textdomain();
 
 		$this->assertTrue( $called, 'plugin_locale filter not called within load_plugin_textdomain() suggesting it has not been set by the plugin.' );
-		$this->assertEquals( 'bh-wc-duplicate-gateway', $actual_domain );
+		$this->assertEquals( 'bh-wc-duplicate-payment-gateways', $actual_domain );
 
 	}
 }
