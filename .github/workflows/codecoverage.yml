@@ -68,10 +68,10 @@ jobs:
         uses: php-actions/composer@v1
 
       - name: Run unit tests
-        run: vendor/bin/codecept run unit --coverage unit.cov || true;
+        run: XDEBUG_MODE=coverage vendor/bin/codecept run unit --coverage unit.cov || true;
 
       - name: Run wpunit tests
-        run: vendor/bin/codecept run wpunit --coverage wpunit.cov || true;
+        run: XDEBUG_MODE=coverage vendor/bin/codecept run wpunit --coverage wpunit.cov || true;
 
       - name: Clear previous code coverage
         run: |
