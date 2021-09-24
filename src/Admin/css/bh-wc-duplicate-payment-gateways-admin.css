@@ -5,4 +5,5 @@
 
 .duplicate-payment-gateway {
     cursor: pointer;
+    vertical-align: bottom;
 }
