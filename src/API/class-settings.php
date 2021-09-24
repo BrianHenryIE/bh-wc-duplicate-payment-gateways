@@ -76,6 +76,6 @@ class Settings implements Settings_Interface {
 	 * @return string
 	 */
 	public function get_plugin_version(): string {
-		return '1.0.0';
+		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION' ) ? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION : '1.2.0';
 	}
 }
