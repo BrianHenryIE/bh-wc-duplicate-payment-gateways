@@ -19,13 +19,12 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
  */
 class Admin_Test extends \Codeception\Test\Unit {
 
-	protected function _before() {
+	protected function setup(): void {
 		\WP_Mock::setUp();
 	}
 
-	// This is required for `'times' => 1` to be verified.
-	protected function _tearDown() {
-		parent::_tearDown();
+	protected function tearDown(): void {
+		parent::tearDown();
 		\WP_Mock::tearDown();
 	}
 
