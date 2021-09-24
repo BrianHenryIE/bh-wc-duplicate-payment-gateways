@@ -64,11 +64,164 @@ class Payment_Gateways_List_UI {
 			/* translators: %s: The payment gateway ID. */
 			echo '<span class="duplicate-payment-gateway duplicate-delete dashicons dashicons-trash" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Delete the duplicate "%s" payment method.', 'woocommerce' ), $method_title ) ) . '"></span>';
 		} else {
-			// Print an add button.
-			/* translators: %s: The payment gateway ID. */
-			echo '<span class="duplicate-payment-gateway duplicate-add dashicons dashicons-admin-page" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Duplicate the "%s" payment method.', 'woocommerce' ), $method_title ) ) . '"></span>';
+			// Maybe print an add button.
+
+			if ( $this->is_safe_to_duplicate( $gateway ) ) {
+				/* translators: %s: The payment gateway ID. */
+				echo '<span class="duplicate-payment-gateway duplicate-add dashicons dashicons-admin-page" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Duplicate the "%s" payment method.', 'woocommerce' ), $method_title ) ) . '"></span>';
+			}
 		}
 
 		echo '</td>';
+	}
+
+	/**
+	 * Runs a test duplication to see if the duplicate id is overwritten during construction.
+	 *
+	 * If it is, then there will be problems and the gateway should not be duplicated.
+	 *
+	 * @param WC_Payment_Gateway $gateway_to_copy A gateway we might want to duplicate.
+	 *
+	 * @return bool
+	 *
+	 * phpcs:disable Squiz.Commenting.FunctionComment.Missing
+	 */
+	protected function is_safe_to_duplicate( WC_Payment_Gateway $gateway_to_copy ) : bool {
+
+		static $count = 0;
+
+		$duplicate_id = 'duplicate-id';
+
+		class_alias( get_class( $gateway_to_copy ), __NAMESPACE__ . '\Attempt_Duplicate_Gateway_' . $count );
+
+		switch ( $count ) {
+			case 0:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_0 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 1:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_1 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 2:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_2 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 3:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_3 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						parent::__construct();
+					}
+				};
+				break;
+			case 4:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_4 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 5:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_5 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 6:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_6 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 7:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_7 {
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 8:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_8 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+					}
+				};
+				break;
+			case 9:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_9 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+						$this->id = $duplicate_id;
+					}
+				};
+				break;
+			case 10:
+				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_10 implements Gateway_Copy_Interface {
+					use CC_Gateway_Parameter_Names_Trait;
+					public function __construct( string $duplicate_id ) {
+						$this->id = $duplicate_id;
+						if ( is_callable( 'parent::__construct' ) ) {
+							parent::__construct();
+						}
+						$this->id = $duplicate_id;
+					}
+				};
+				break;
+			default:
+				// If you see this, just copy one of the above sections and increment the number.
+				throw new \Exception( 'Too many duplicate gateways.' );
+		}
+
+		$count++;
+
+		return $duplicate_gateway->id === $duplicate_id;
 	}
 }
