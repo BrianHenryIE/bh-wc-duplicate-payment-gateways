@@ -17,6 +17,10 @@
     },
     "repositories": [
         {
+            "type": "path",
+            "url":  "../wp-namespace-autoloader/"
+        },
+        {
             "url": "https://github.com/WordPress/wordpress-develop",
             "type": "git"
         },

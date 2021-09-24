@@ -11,7 +11,7 @@
  * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r
  *
  * @license GPLv2
- * Modified by BrianHenryIE on 07-September-2021 using Strauss.
+ * Modified by BrianHenryIE on 23-September-2021 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -85,7 +85,7 @@ if ( ! class_exists( '\BrianHenryIE\WC_Duplicate_Payment_Gateways\Pablo_Pacheco\
 			$args      = $this->get_args();
 			$namespace = $args['namespace_prefix'];
 
-			if ( ! class_exists( $class ) && ! interface_exists( $class ) ) {
+			if ( ! class_exists( $class ) && ! interface_exists( $class ) && ! trait_exists( $class ) ) {
 
 				if ( false !== strpos( $class, $namespace ) ) {
 					if ( ! class_exists( $class ) ) {
@@ -226,6 +226,7 @@ if ( ! class_exists( '\BrianHenryIE\WC_Duplicate_Payment_Gateways\Pablo_Pacheco\
 			if ( $args['prepend_class'] ) {
 				$prepended = preg_replace( '/(.*)-interface$/', 'interface-$1', $final_file );
 				$prepended = preg_replace( '/(.*)-abstract$/', 'abstract-$1', $prepended );
+				$prepended = preg_replace( '/(.*)-trait$/', 'trait-$1', $prepended );
 
 				// If no changes were made when looking for interfaces and abstract classes, prepend "class-".
 				if ( $prepended === $final_file ) {

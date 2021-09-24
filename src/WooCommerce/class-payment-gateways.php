@@ -52,33 +52,43 @@ class Payment_Gateways {
 			switch ( $index ) {
 				case 0:
 					$gateways[] = new class( $new_id ) extends Gateway_0 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 1:
 					$gateways[] = new class( $new_id ) extends Gateway_1 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 2:
 					$gateways[] = new class( $new_id ) extends Gateway_2 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 3:
 					$gateways[] = new class( $new_id ) extends Gateway_3 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
 							parent::__construct();
@@ -88,63 +98,84 @@ class Payment_Gateways {
 					break;
 				case 4:
 					$gateways[] = new class( $new_id ) extends Gateway_4 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 5:
 					$gateways[] = new class( $new_id ) extends Gateway_5 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 6:
 					$gateways[] = new class( $new_id ) extends Gateway_6 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 7:
 					$gateways[] = new class( $new_id ) extends Gateway_7 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 8:
 					$gateways[] = new class( $new_id ) extends Gateway_8 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 9:
 					$gateways[] = new class( $new_id ) extends Gateway_8 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
 					break;
 				case 10:
 					$gateways[] = new class( $new_id ) extends Gateway_8 implements Gateway_Copy_Interface {
+						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
-							parent::__construct();
+							if ( is_callable( 'parent::__construct' ) ) {
+								parent::__construct();
+							}
 							$this->id = $new_id;
 						}
 					};
