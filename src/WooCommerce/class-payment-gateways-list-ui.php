@@ -24,7 +24,7 @@ class Payment_Gateways_List_UI {
 
 		foreach ( $columns as $id => $title ) {
 			$new_columns[ $id ] = $title;
-			if ( 'sort' === $id ) {
+			if ( 'action' === $id ) {
 				$new_columns['duplicate'] = '';
 			}
 		}
