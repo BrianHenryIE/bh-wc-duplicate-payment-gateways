@@ -64,7 +64,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$this->define_plugins_page_hooks();
 
 		$this->define_add_payment_gateways_hooks();
-		// $this->define_add_new_gateway_settings_hooks();
+		$this->define_add_new_gateway_settings_hooks();
 		$this->define_payment_gateway_hooks();
 		$this->define_woocommerce_payment_gateways_list_ui_hooks();
 		$this->define_ajax_hooks();
@@ -130,6 +130,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$payment_gateway = new Payment_Gateway();
 
 		add_filter( 'woocommerce_gateway_method_title', array( $payment_gateway, 'replace_title' ), 10, 2 );
+		add_filter( 'woocommerce_gateway_method_description', array( $payment_gateway, 'replace_description' ), 10, 2 );
 	}
 
 	protected function define_woocommerce_payment_gateways_list_ui_hooks(): void {
