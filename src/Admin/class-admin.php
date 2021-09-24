@@ -1,12 +1,8 @@
 <?php
 /**
- * The admin-specific functionality of the plugin.
+ * Register the wp-admin JavaScript and CSS.
  *
- * @link       http://example.com
- * @since      1.0.0
- *
- * @package    BH_WC_Duplicate_Payment_Gateways
- * @subpackage BH_WC_Duplicate_Payment_Gateways/admin
+ * @package    brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
@@ -25,8 +21,20 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
  */
 class Admin {
 
+	/**
+	 * The plugin setting.
+	 *
+	 * @uses Settings_Interface::get_plugin_version()
+	 *
+	 * @var Settings_Interface
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * Admin constructor.
+	 *
+	 * @param Settings_Interface $settings The plugin's settings.
+	 */
 	public function __construct( Settings_Interface $settings ) {
 		$this->settings = $settings;
 	}
@@ -53,7 +61,7 @@ class Admin {
 	 */
 	public function enqueue_scripts(): void {
 
-		// TODO: Only add on the payment gateways list.
+		// TODO: Only add on the payment gateways list?
 
 		$handle = 'bh-wc-duplicate-payment-gateways';
 		wp_enqueue_script( $handle, plugin_dir_url( __FILE__ ) . 'js/bh-wc-duplicate-payment-gateways-admin.js', array( 'jquery' ), $this->settings->get_plugin_version(), true );

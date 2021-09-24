@@ -15,7 +15,7 @@ interface Settings_Interface {
 	public function add_new_duplicate( string $id, string $super_class ): void;
 
 
-	public function delete_duplicate( string $id ): void;
+	public function delete_duplicate( string $duplicate_gateway_id ): void;
 
 	/**
 	 * @used-by Admin::enqueue_scripts()
