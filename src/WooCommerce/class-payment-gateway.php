@@ -16,16 +16,15 @@ use WC_Payment_Gateway;
  */
 class Payment_Gateway {
 
-	// return apply_filters( 'woocommerce_gateway_method_title', $this->method_title, $this );
-
 	/**
 	 * If a new title has been specified for the gateway, replace the parent title.
+	 * Applies in the wp-admin area (i.e. this is not the title shown to customer at checkout).
 	 *
 	 * @hooked woocommerce_gateway_method_title
 	 * @see WC_Payment_Gateway::get_method_title()
 	 *
-	 * @param string             $method_title
-	 * @param WC_Payment_Gateway $gateway
+	 * @param string             $method_title The original payment method title.
+	 * @param WC_Payment_Gateway $gateway      The payment gateway instance.
 	 * @return string
 	 */
 	public function replace_title( string $method_title, WC_Payment_Gateway $gateway ): string {

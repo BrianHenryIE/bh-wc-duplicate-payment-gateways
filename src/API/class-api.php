@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Functions to add and delete duplicates.
+ *
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
+ */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
@@ -7,26 +11,53 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways;
 use WC_Payment_Gateway;
 
+/**
+ * Adds and deletes from the plugin settings, deletes from WooCommerce Settings API settings for deleted duplicate gateways.
+ *
+ * @used-by AJAX
+ */
 class API implements API_Interface {
 
+	/**
+	 * Used to read and delete the settings.
+	 *
+	 * @var Settings_Interface
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * API constructor.
+	 *
+	 * @param Settings_Interface $settings The plugin's settings.
+	 */
 	public function __construct( Settings_Interface $settings ) {
 		$this->settings = $settings;
 	}
 
 	/**
+	 * Duplicate a payment gateway.
+	 * * Record the entry in this plugin's settings, which will in future be read each time WooCommerce builds its list
+	 * of gateways.
+	 *
+	 * @see Payment_Gateways::add_gateways()
+	 *
+	 * NB: Does not check if the gateway id is set in the parent class constructor (which would usually make a
+	 * gateway ineligible for duplication).
 	 *
 	 * @used-by AJAX::add_new_duplicate_payment_gateway()
 	 *
-	 * @param string $gateway_id
-	 * @param string $duplicate_id
+	 * @param string $gateway_id The id of the gateway to duplicate.
+	 * @param string $duplicate_id A unique id for the new gateway.
 	 *
 	 * @return array{success: bool, message:string}
 	 */
 	public function add_new_duplicate_payment_gateway( string $gateway_id, string $duplicate_id ): array {
 
-		/** @var array<string, WC_Payment_Gateway> $gateways */
+		/**
+		 * All payment gateways registered with WooCommerce.
+		 *
+		 * @var array<string, WC_Payment_Gateway> $gateways
+		 */
 		$gateways = \WC_Payment_Gateways::instance()->payment_gateways();
 
 		if ( isset( $gateways[ $duplicate_id ] ) ) {
@@ -74,18 +105,26 @@ class API implements API_Interface {
 	}
 
 	/**
+	 * Delete a duplicate payment gateway:
+	 * * delete its WooCommerce Settings API settings
+	 * * delete its entry in this plugin's settings
 	 *
 	 * TODO: Log the settings before deleting.
 	 *
-	 * @param string $gateway_id
+	 * @param string $gateway_id The id of the duplicate gateway to delete.
 	 *
 	 * @see \WC_Settings_API
+	 * @used-by AJAX::delete_duplicate_payment_gateway()
 	 *
 	 * @return array{success: bool, message:string}
 	 */
 	public function delete_duplicate_payment_gateway( string $gateway_id ): array {
 
-		/** @var array<string, WC_Payment_Gateway> $gateways */
+		/**
+		 * All payment gateways registered with WooCommerce.
+		 *
+		 * @var array<string, WC_Payment_Gateway> $gateways
+		 */
 		$gateways = \WC_Payment_Gateways::instance()->payment_gateways();
 
 		if ( ! isset( $gateways[ $gateway_id ] ) ) {
@@ -95,10 +134,9 @@ class API implements API_Interface {
 			);
 		}
 
-		/** @var WC_Payment_Gateway $gateway */
 		$gateway = $gateways[ $gateway_id ];
 
-		if ( ! ( $gateway instanceof Gateway_Copy_Interface ) ) {
+		if ( ! ( $gateway instanceof Gateway_Copy_Interface ) || ! ( $gateway instanceof WC_Payment_Gateway ) ) {
 			return array(
 				'success' => false,
 				'message' => 'Not a duplicate payment gateway. Cannot delete',

@@ -26,6 +26,10 @@ class Payment_Gateways {
 	}
 
 	/**
+	 *
+	 * TODO: rename this register gateways?!
+	 * TODO: Does this run just once on each request? i.e. are we wasting capacity by re-instantiating duplicates?
+	 *
 	 * @hooked woocommerce_payment_gateways
 	 *
 	 * @param array<string|WC_Payment_Gateway> $gateways The existing WooCommerce gateways.
