@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.2 2021-09-28
+
+* Increase max number of existing gateways that can be assessed for duplicating from 10 to 30.
+* Increase max number of duplicate gateways from 10 to 30.
+
 ## 1.4.1 2021-09-28
 
 * Cache creation of gateways.

@@ -11,7 +11,7 @@
  * phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r
  *
  * @license GPLv2
- * Modified by BrianHenryIE on 23-September-2021 using Strauss.
+ * Modified by BrianHenryIE on 29-September-2021 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
