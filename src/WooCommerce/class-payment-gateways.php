@@ -21,6 +21,14 @@ class Payment_Gateways {
 
 	protected Settings_Interface $settings;
 
+	/**
+	 * Without this cache, when the WooCommerce filter is called repeatedly, the gateways are recreated, spending
+	 * the allowance of max. gatwways.
+	 *
+	 * @var array<string, WC_Payment_Gateway>
+	 */
+	protected $cached_gateways = array();
+
 	public function __construct( Settings_Interface $settings ) {
 		$this->settings = $settings;
 	}
@@ -41,6 +49,11 @@ class Payment_Gateways {
 		$configs = array_values( $configs );
 
 		foreach ( $configs as $index => $config ) {
+			$new_id = $config['new_id'];
+
+			if ( isset( $this->cached_gateways[ $new_id ] ) ) {
+				return $this->cached_gateways[ $new_id ];
+			}
 
 			$gateway_to_copy = $config['class_name'];
 			// If the class doesn't exist or is not a WC_Payment_Gateway...
@@ -51,11 +64,10 @@ class Payment_Gateways {
 				continue;
 			}
 			class_alias( $gateway_to_copy, __NAMESPACE__ . '\Gateway_' . $index );
-			$new_id = $config['new_id'];
 
 			switch ( $index ) {
 				case 0:
-					$gateways[] = new class( $new_id ) extends Gateway_0 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_0 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -66,7 +78,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 1:
-					$gateways[] = new class( $new_id ) extends Gateway_1 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_1 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -77,7 +89,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 2:
-					$gateways[] = new class( $new_id ) extends Gateway_2 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_2 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -88,7 +100,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 3:
-					$gateways[] = new class( $new_id ) extends Gateway_3 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_3 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -97,7 +109,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 4:
-					$gateways[] = new class( $new_id ) extends Gateway_4 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_4 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -108,7 +120,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 5:
-					$gateways[] = new class( $new_id ) extends Gateway_5 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_5 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -119,7 +131,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 6:
-					$gateways[] = new class( $new_id ) extends Gateway_6 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_6 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -130,7 +142,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 7:
-					$gateways[] = new class( $new_id ) extends Gateway_7 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_7 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -141,7 +153,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 8:
-					$gateways[] = new class( $new_id ) extends Gateway_8 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_8 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -152,7 +164,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 9:
-					$gateways[] = new class( $new_id ) extends Gateway_9 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_9 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -163,7 +175,7 @@ class Payment_Gateways {
 					};
 					break;
 				case 10:
-					$gateways[] = new class( $new_id ) extends Gateway_10 implements Gateway_Copy_Interface {
+					$new_gateway = new class( $new_id ) extends Gateway_10 implements Gateway_Copy_Interface {
 						use CC_Gateway_Parameter_Names_Trait;
 						public function __construct( string $new_id ) {
 							$this->id = $new_id;
@@ -177,6 +189,8 @@ class Payment_Gateways {
 					// If you see this, just copy one of the above sections and increment the number.
 					throw new \Exception( 'Too many duplicate gateways.' );
 			}
+			$gateways[]                       = $new_gateway;
+			$this->cached_gateways[ $new_id ] = $new_gateway;
 		}
 
 		return $gateways;
