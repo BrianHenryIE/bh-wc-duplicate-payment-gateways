@@ -7,7 +7,7 @@
  *
  * So we need the subclass to sometimes change the HTML form input ids from the id hardcoded in the form, to the id
  * of the new gateway.
- * And sometime we need to change (copy) the HTML form inputs ids from the subclass id to the parent class ids which
+ * And sometimes we need to change (copy) the HTML form inputs ids from the subclass id to the parent class ids which
  * are presumably hardcoded in the parent validate and process-payment methods.
  *
  * @see WC_Payment_Gateway_CC::form()
