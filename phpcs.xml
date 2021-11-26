@@ -46,5 +46,8 @@
     <rule ref="Squiz.PHP.DisallowMultipleAssignments.Found">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
+    <rule ref="WordPress.Security.NonceVerification.Missing">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
 
 </ruleset>
