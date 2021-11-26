@@ -29,6 +29,10 @@
             "type": "git"
         },
         {
+            "type": "path",
+            "url":  "../bh-wp-logger/"
+        },
+        {
             "url": "https://github.com/BrianHenryIE/bh-wp-logger",
             "type": "git"
         },
