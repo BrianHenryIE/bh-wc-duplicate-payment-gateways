@@ -49,7 +49,7 @@ class Admin_Test extends \Codeception\Test\Unit {
 
 		$css_file = $plugin_root_dir . '/admin/css/bh-wc-duplicate-payment-gateways-admin.css';
 
-        $plugin_name = 'bh-wc-duplicate-payment-gateways';
+		$plugin_name = 'bh-wc-duplicate-payment-gateways';
 
 		\WP_Mock::userFunction(
 			'wp_enqueue_style',
@@ -59,10 +59,12 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-        $settings = $this->makeEmpty( Settings_Interface::class,
-        array(
-            'get_plugin_version' => '1.0.0'
-        ));
+		$settings = $this->makeEmpty(
+			Settings_Interface::class,
+			array(
+				'get_plugin_version' => '1.0.0',
+			)
+		);
 
 		$admin = new Admin( $settings );
 
@@ -90,38 +92,38 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-        $nonce = 'abc123';
+		$nonce = 'abc123';
 
-        \WP_Mock::userFunction(
-            'wp_create_nonce',
-            array(
-                'args'  => array( AJAX::NONCE_ACTION ),
-                'return' => $nonce,
-            )
-        );
+		\WP_Mock::userFunction(
+			'wp_create_nonce',
+			array(
+				'args'   => array( AJAX::NONCE_ACTION ),
+				'return' => $nonce,
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'admin_url',
-            array(
-                'args'  => array( 'admin-ajax.php' ),
-                'return_arg' => 0,
-            )
-        );
+		\WP_Mock::userFunction(
+			'admin_url',
+			array(
+				'args'       => array( 'admin-ajax.php' ),
+				'return_arg' => 0,
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'wp_json_encode',
-            array(
-//                'args'  => array( \WP_Mock\Functions::type( 'array' ) ),
-                'return' => '{"json"=>"json"}',
-            )
-        );
+		\WP_Mock::userFunction(
+			'wp_json_encode',
+			array(
+				// 'args'  => array( \WP_Mock\Functions::type( 'array' ) ),
+								'return' => '{"json"=>"json"}',
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'wp_add_inline_script',
-            array(
-                'args'  => array( 'bh-wc-duplicate-payment-gateways', \WP_Mock\Functions::type( 'string' ) ),
-            )
-        );
+		\WP_Mock::userFunction(
+			'wp_add_inline_script',
+			array(
+				'args' => array( 'bh-wc-duplicate-payment-gateways', \WP_Mock\Functions::type( 'string' ) ),
+			)
+		);
 
 		$handle    = 'bh-wc-duplicate-payment-gateways';
 		$src       = $plugin_root_dir . '/admin/js/bh-wc-duplicate-payment-gateways-admin.js';
@@ -137,12 +139,14 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-        $settings = $this->makeEmpty( Settings_Interface::class, array(
-            'get_plugin_version' => '1.0.0'
-        ));
+		$settings = $this->makeEmpty(
+			Settings_Interface::class,
+			array(
+				'get_plugin_version' => '1.0.0',
+			)
+		);
 
 		$admin = new Admin( $settings );
-
 
 		$admin->enqueue_scripts();
 

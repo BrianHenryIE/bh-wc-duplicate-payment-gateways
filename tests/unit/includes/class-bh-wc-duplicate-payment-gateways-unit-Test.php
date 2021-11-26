@@ -38,8 +38,8 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 			array( new AnyInstance( I18n::class ), 'load_plugin_textdomain' )
 		);
 
-        $api = $this->makeEmpty( API_Interface::class );
-        $settings = $this->makeEmpty( Settings_Interface::class );
+		$api      = $this->makeEmpty( API_Interface::class );
+		$settings = $this->makeEmpty( Settings_Interface::class );
 		new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
 	}
 
@@ -58,9 +58,9 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 			array( new AnyInstance( Admin::class ), 'enqueue_scripts' )
 		);
 
-        $api = $this->makeEmpty( API_Interface::class );
-        $settings = $this->makeEmpty( Settings_Interface::class );
-        new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
+		$api      = $this->makeEmpty( API_Interface::class );
+		$settings = $this->makeEmpty( Settings_Interface::class );
+		new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
 	}
 
 }
