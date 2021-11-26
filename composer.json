@@ -144,6 +144,14 @@
             "vendor/bin/phpcov merge --clover tests/_output/clover.xml --html tests/_output/html tests/_output;",
             "open tests/_output/html/index.html"
         ],
+        "lint": [
+            "vendor/bin/phpcbf || true",
+            "vendor/bin/phpcs || true",
+            "vendor/bin/phpstan analyse --memory-limit 1G"
+        ],
+        "lint-changes": [
+            "updated_files=$( git status | grep 'modified:\\s.*.php$' | cut -c14- | awk '{ printf(\"%s \", $0) }' ); vendor/bin/phpcbf $(echo $updated_files); vendor/bin/phpcs $(echo $updated_files); vendor/bin/phpstan analyse $(echo $updated_files) --memory-limit 1G"
+        ],
         "create-plugin-archive": [
             "vendor/bin/wp dist-archive src --plugin-dirname=$(basename \"$PWD\")"
         ]
