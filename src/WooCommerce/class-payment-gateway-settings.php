@@ -17,6 +17,7 @@ class Payment_Gateway_Settings {
 
 	const ADMIN_METHOD_TITLE = 'bh_wc_duplicate_payment_gateways_admin_title';
 	const ADMIN_DESCRIPTION  = 'bh_wc_duplicate_payment_gateways_admin_description';
+	const HIDE_ON_CHECKOUT   = 'bh_wc_duplicate_payment_gateways_hide_on_checkout';
 
 	/**
 	 * Filters each payment gateway's settings output to print out the gateway id on the WC Settings API page.
@@ -53,8 +54,6 @@ class Payment_Gateway_Settings {
 	/**
 	 * The form field to add to each settings page.
 	 *
-	 * TODO: Add the existing/default text as placeholder.
-	 *
 	 * @param array<string|int, mixed> $form_fields The gateway's existing settings.
 	 * @param WC_Payment_Gateway       $gateway The gateway instance.
 	 * @return array<string|int, mixed>
@@ -89,6 +88,14 @@ class Payment_Gateway_Settings {
 			'placeholder' => $parent_instance->get_method_description(),
 		);
 
+		$form_fields[ self::HIDE_ON_CHECKOUT ] = array(
+			'title'       => __( 'Hide on checkout', 'bh-wc-offline-credit-card-gateway' ),
+			'label'       => __( 'Hide on checkout', 'bh-wc-offline-credit-card-gateway' ),
+			'type'        => 'checkbox',
+			'description' => __( '[Duplicate gateway] If this gateway is just used for reporting, you may never want it available at the checkout.', 'bh-wc-duplicate-payment-gateways' ),
+			'default'     => 'no',
+		);
+
 		return $form_fields;
 	}
 
@@ -97,6 +104,8 @@ class Payment_Gateway_Settings {
 	 *
 	 * Find the gateway id from the current filter name, get the gateway instance and save the settings.
 	 * TODO: Is there a better way than this?!
+	 *
+	 * @see WC_Settings_Payment_Gateways::save()
 	 */
 	public function save_settings(): void {
 
@@ -112,11 +121,17 @@ class Payment_Gateway_Settings {
 		 */
 		$gateway = $gateways[ $gateway_id ];
 
+		if ( ! isset( $_POST['_wpnonce'] ) || false === wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ), 'woocommerce-settings' ) ) {
+			// TODO: Log.
+			return;
+		}
+
 		$posted = (array) wc_clean( $_POST );
 
 		$option_names = array(
 			self::ADMIN_METHOD_TITLE,
 			self::ADMIN_DESCRIPTION,
+			self::HIDE_ON_CHECKOUT,
 		);
 
 		foreach ( $option_names as $option_name ) {
@@ -124,7 +139,11 @@ class Payment_Gateway_Settings {
 			$posted_option_name = "woocommerce_{$gateway_id}_{$option_name}";
 
 			if ( isset( $posted[ $posted_option_name ] ) ) {
-				$gateway->update_option( self::ADMIN_DESCRIPTION, $posted[ $posted_option_name ] );
+				$option_value = $posted[ $posted_option_name ];
+				if ( self::HIDE_ON_CHECKOUT === $option_name ) {
+					$option_value = wc_bool_to_string( $option_value );
+				}
+				$gateway->update_option( $option_name, $option_value );
 			}
 		}
 

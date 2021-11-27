@@ -18,4 +18,4 @@ parameters:
         - tests/wpunit/WooCommerce/class-dummy-cc-gateway.php
     ignoreErrors:
         - '#LoggerInterface\|null#'
-        - '#Unreacha    ble statement#'
+        - '#Unreachable statement#'

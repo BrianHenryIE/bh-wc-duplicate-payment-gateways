@@ -4,6 +4,8 @@
  * and that can be extended.
  *
  * @see class_alias()
+ *
+ * @package     brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
@@ -13,22 +15,33 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
 use WC_Payment_Gateway;
 
 /**
- * phpcs:disable Squiz.Commenting.FunctionComment.Missing
+ *
  */
 class Payment_Gateways {
 
 	const MAX_DUPLICATE_GATEWAYS = 10;
 
+	/**
+	 * Needed for the set of gateways to create.
+	 *
+	 * @see Settings_Interface::get_configs()
+	 * @var Settings_Interface
+	 */
 	protected Settings_Interface $settings;
 
 	/**
 	 * Without this cache, when the WooCommerce filter is called repeatedly, the gateways are recreated, spending
-	 * the allowance of max. gatwways.
+	 * the allowance of max. gateways.
 	 *
 	 * @var array<string, WC_Payment_Gateway>
 	 */
-	protected $cached_gateways = array();
+	protected array $cached_gateways = array();
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Settings_Interface $settings The plugin settings.
+	 */
 	public function __construct( Settings_Interface $settings ) {
 		$this->settings = $settings;
 	}
@@ -36,13 +49,15 @@ class Payment_Gateways {
 	/**
 	 *
 	 * TODO: rename this register gateways?!
-	 * TODO: Does this run just once on each request? i.e. are we wasting capacity by re-instantiating duplicates?
 	 *
 	 * @hooked woocommerce_payment_gateways
 	 *
 	 * @param array<string|WC_Payment_Gateway> $gateways The existing WooCommerce gateways.
+	 * @throws \Exception When too many duplicate gateways are required.
+	 * @return array<string|WC_Payment_Gateway>
 	 */
-	public function add_gateways( array $gateways ) {
+	public function add_gateways( array $gateways ): array {
+		// phpcs:disable Squiz.Commenting.FunctionComment.Missing
 
 		// Stored keyed by id, but we want an index here, so this is an easy way to achieve that.
 		$configs = $this->settings->get_configs();
@@ -52,7 +67,8 @@ class Payment_Gateways {
 			$new_id = $config['new_id'];
 
 			if ( isset( $this->cached_gateways[ $new_id ] ) ) {
-				return $this->cached_gateways[ $new_id ];
+				$gateways[] = $this->cached_gateways[ $new_id ];
+				return $gateways;
 			}
 
 			$gateway_to_copy = $config['class_name'];
@@ -413,8 +429,41 @@ class Payment_Gateways {
 	}
 
 
+	/**
+	 * Each duplicate gateway has an option "hide at checkout" intended for gateways that are copied for reporting
+	 * purposes. This function removes them from the checkout.
+	 * TODO: maybe filter on is_admin rather than is_checkout.
+	 *
+	 * @hooked woocommerce_available_payment_gateways
+	 *
+	 * @see \WC_Payment_Gateways::get_available_payment_gateways()
+	 * @see Payment_Gateway_Settings::HIDE_ON_CHECKOUT
+	 *
+	 * @param array<string, WC_Payment_Gateway> $available_gateways The "enabled" gateways.
+	 *
+	 * @return array<string, WC_Payment_Gateway>
+	 */
+	public function hide_gateways_at_checkout( array $available_gateways ): array {
 
-	// Hide gateways?
+		// i.e. admins should be able to select the gateway when manually creating an order.
+		if ( is_checkout() ) {
+			return $available_gateways;
+		}
 
+		$updated_available_gateways = array();
+
+		foreach ( $available_gateways as $key => $gateway ) {
+			if ( $gateway instanceof Gateway_Copy_Interface && $gateway instanceof WC_Payment_Gateway ) {
+				$should_hide_gateway = $gateway->get_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'no' );
+				if ( ! wc_string_to_bool( $should_hide_gateway ) ) {
+					$updated_available_gateways[ $key ] = $gateway;
+				}
+			} else {
+				$updated_available_gateways[ $key ] = $gateway;
+			}
+		}
+
+		return $updated_available_gateways;
+	}
 
 }

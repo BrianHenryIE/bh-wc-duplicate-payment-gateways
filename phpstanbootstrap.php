@@ -16,5 +16,5 @@ define( 'WP_PLUGIN_DIR', __DIR__ . '/wp-content/plugins' );
  * @see \Codeception\Module\WPLoader::_getConstants()
  */
 define( 'WP_TESTS_DOMAIN', 'example.org' );
-define( 'ABSPATH', __DIR__ . '/wordpress' );
+
 
