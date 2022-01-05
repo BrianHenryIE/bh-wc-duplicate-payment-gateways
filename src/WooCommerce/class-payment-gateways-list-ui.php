@@ -90,6 +90,20 @@ class Payment_Gateways_List_UI {
 	 */
 	protected function is_safe_to_duplicate( WC_Payment_Gateway $gateway_to_copy ) : bool {
 
+		// We won't duplicate duplicates.
+		if ( $gateway_to_copy instanceof Gateway_Copy_Interface ) {
+			return false;
+		}
+
+		// We cannot duplicate gateways that have constructor arguments (i.e. the WooCommerce-Payments plugin).
+		$class                      = new \ReflectionClass( get_class( $gateway_to_copy ) );
+		$constructor                = $class->getConstructor();
+		$constructor_paramter_count = $constructor->getNumberOfParameters();
+
+		if ( 0 < $constructor_paramter_count ) {
+			return false;
+		}
+
 		static $count = 0;
 
 		$duplicate_id = 'duplicate-id';
@@ -442,6 +456,7 @@ class Payment_Gateways_List_UI {
 
 		$count++;
 
+		// If the id has been correctly set, the gateway can be duplicated.
 		return $duplicate_gateway->id === $duplicate_id;
 	}
 
