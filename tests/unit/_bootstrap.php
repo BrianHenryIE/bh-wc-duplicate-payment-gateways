@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file for WP_Mock.
  *
- * @package           BH_WC_Duplicate_Payment_Gateways
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
 WP_Mock::setUsePatchwork( true );

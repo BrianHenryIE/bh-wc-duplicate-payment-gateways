@@ -2,14 +2,13 @@
 /**
  * Tests for the root plugin file.
  *
- * @package BH_WC_Duplicate_Payment_Gateways
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API;
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\Includes\BH_WC_Duplicate_Payment_Gateways;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API_Interface;
 
 /**
  * Class Plugin_WP_Mock_Test
@@ -36,7 +35,7 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 			function( $api, $settings ) {}
 		);
 
-		$plugin_root_dir = dirname( __DIR__, 2 ) . '/src';
+		global $plugin_root_dir;
 
 		\WP_Mock::userFunction(
 			'plugin_dir_path',
@@ -108,7 +107,7 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 
 		$this->assertArrayHasKey( 'bh_wc_duplicate_payment_gateways', $GLOBALS );
 
-		$this->assertInstanceOf( API::class, $GLOBALS['bh_wc_duplicate_payment_gateways'] );
+		$this->assertInstanceOf( API_Interface::class, $GLOBALS['bh_wc_duplicate_payment_gateways'] );
 
 	}
 

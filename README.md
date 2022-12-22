@@ -2,7 +2,7 @@
 
 # Duplicate Payment Gateways
 
-![Duplicating a gateway](./assets/duplicate-payment-gateways.gif "Duplicating a gateway")
+![Duplicating a gateway](./.wordpress-org/duplicate-payment-gateways.gif "Duplicating a gateway")
 
 
 ## Contributing

@@ -1,10 +1,10 @@
 <?php
 /**
- * Config for PHPStan missing constants.
+ * Define constants that PhpStan cannot find.
  *
- * @see https://phpstan.org/user-guide/discovering-symbols
+ * @see https://phpstan.org/user-guide/discovering-symbols#global-constants
  *
- * @package     brianhenryie/bh-wc-duplicate-payment-gateways
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
 define( 'WP_CONTENT_DIR', __DIR__ . '/wp-content' );
@@ -16,5 +16,3 @@ define( 'WP_PLUGIN_DIR', __DIR__ . '/wp-content/plugins' );
  * @see \Codeception\Module\WPLoader::_getConstants()
  */
 define( 'WP_TESTS_DOMAIN', 'example.org' );
-
-
