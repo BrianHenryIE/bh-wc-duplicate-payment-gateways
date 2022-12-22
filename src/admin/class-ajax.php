@@ -1,8 +1,15 @@
 <?php
+/**
+ * Handles the AJAX functions as gateways are duplicated and duplicates deleted on the WooCommerce payment gateways page.
+ *
+ * i.e. sanitizes the input and presents the output between AJAX and the API class.
+ *
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
+ */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 
 class AJAX {
 
@@ -10,6 +17,9 @@ class AJAX {
 
 	protected API_Interface $api;
 
+	/**
+	 * @param API_Interface $api The main plugin functions.
+	 */
 	public function __construct( API_Interface $api ) {
 		$this->api = $api;
 	}
@@ -53,7 +63,6 @@ class AJAX {
 			);
 			wp_send_json_error( $result );
 		}
-		die();
 	}
 
 
@@ -84,7 +93,6 @@ class AJAX {
 			);
 			wp_send_json_error( $result );
 		}
-		die();
 	}
 
 }

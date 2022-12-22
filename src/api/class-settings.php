@@ -7,6 +7,8 @@
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+
 /**
  * CRUD for the saved duplicates' settings.
  */

@@ -1,6 +1,6 @@
 <?php
 
-namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 interface Settings_Interface {
 

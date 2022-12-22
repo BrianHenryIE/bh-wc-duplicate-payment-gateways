@@ -8,6 +8,8 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways;
 use WC_Payment_Gateway;
 

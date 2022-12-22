@@ -7,8 +7,8 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin_Assets;
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API_Interface;
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes\I18n;
 use WP_Mock\Matcher\AnyInstance;
 

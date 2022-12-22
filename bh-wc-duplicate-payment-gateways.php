@@ -38,12 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
 
-/**
- * Current plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
 define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.5.4' );
+define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Begins execution of the plugin.
@@ -54,7 +50,7 @@ define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.5.4' );
  *
  * @since    1.0.0
  */
-function instantiate_bh_wc_duplicate_payment_gateways(): API {
+function instantiate_bh_wc_duplicate_payment_gateways(): API_Interface {
 
 	$settings = new Settings();
 	$api      = new API( $settings );

@@ -11,7 +11,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use WC_Payment_Gateway;
 
 /**

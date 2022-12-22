@@ -7,7 +7,7 @@
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 
 /**
  * The admin-specific functionality of the plugin.

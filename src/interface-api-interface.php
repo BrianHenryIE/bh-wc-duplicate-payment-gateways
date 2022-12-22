@@ -3,12 +3,12 @@
  * The main functions for creating and deleting duplicates.
  * Which can then be retrieved through the Settings object.
  *
- * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings_Interface::get_configs()
+ * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface::get_configs()
  *
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
-namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
+namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
 

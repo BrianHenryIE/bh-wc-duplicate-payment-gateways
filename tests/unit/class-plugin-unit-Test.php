@@ -8,7 +8,7 @@
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 
 /**
  * Class Plugin_WP_Mock_Test
