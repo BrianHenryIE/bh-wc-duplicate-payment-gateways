@@ -60,15 +60,15 @@ class Payment_Gateway_Settings {
 	 */
 	protected function add_extra_gateway_settings_page( array $form_fields, WC_Payment_Gateway $gateway ): array {
 
-		$parent_classes = class_parents( $gateway );
+		// $parent_classes = class_parents( $gateway );
 		// @phpstan-ignore-next-line WC_Payment_Gateway itself is a subclass, so the next line will never return false.
-		$first_parent_class = array_key_first( $parent_classes );
-		/**
-		 * Instance of the gateway that has been duplicated.
-		 *
-		 * @var WC_Payment_Gateway $parent_instance
-		 */
-		$parent_instance = new $first_parent_class();
+		// $first_parent_class = array_key_first( $parent_classes );
+		// **
+		// * Instance of the gateway that has been duplicated.
+		// *
+		// * @var WC_Payment_Gateway $parent_instance
+		// */
+		// $parent_instance = new $first_parent_class();
 
 		$form_fields[ self::ADMIN_METHOD_TITLE ] = array(
 			'title'       => __( 'Admin title', 'bh-wc-duplicate-payment-gateways' ),
@@ -76,7 +76,7 @@ class Payment_Gateway_Settings {
 			'description' => __( '[Duplicate gateway] Change the title displayed to shop managers in the WooCommerce admin area.', 'bh-wc-duplicate-payment-gateways' ),
 			'default'     => '',
 			'id'          => self::ADMIN_METHOD_TITLE,
-			'placeholder' => $parent_instance->get_method_title(),
+			'placeholder' => $gateway->get_method_title(),
 		);
 
 		$form_fields[ self::ADMIN_DESCRIPTION ] = array(
@@ -85,7 +85,7 @@ class Payment_Gateway_Settings {
 			'description' => __( '[Duplicate gateway] Change the description displayed to shop managers in the WooCommerce admin area.', 'bh-wc-duplicate-payment-gateways' ),
 			'default'     => '',
 			'id'          => self::ADMIN_DESCRIPTION,
-			'placeholder' => $parent_instance->get_method_description(),
+			'placeholder' => $gateway->get_method_description(),
 		);
 
 		$form_fields[ self::HIDE_ON_CHECKOUT ] = array(

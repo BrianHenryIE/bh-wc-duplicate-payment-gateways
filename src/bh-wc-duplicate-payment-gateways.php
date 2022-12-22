@@ -15,13 +15,14 @@
  * Plugin Name:       Duplicate Payment Gateways
  * Plugin URI:        http://github.com/BrianHenryIE/bh-wc-duplicate-payment-gateways/
  * Description:       Enables multiple instances of WooCommerce payment gateways. NB: Not compatible with 100% of payment gateway plugins.
- * Version:           1.5.1
+ * Version:           1.5.4
  * Author:            BrianHenryIE
  * Author URI:        http://BrianHenry.ie/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       bh-wc-duplicate-payment-gateways
  * Domain Path:       /languages
+ * Requires PHP:      7.4
  */
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
@@ -42,7 +43,7 @@ require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.5.1' );
+define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.5.4' );
 
 /**
  * Begins execution of the plugin.
@@ -59,6 +60,8 @@ function instantiate_bh_wc_duplicate_payment_gateways(): API {
 	$api      = new API( $settings );
 
 	new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
+
+	// \BH_WC_Duplicate_Payment_Gateways_SLSWC_Client::get_instance( 'https://bhwp.ie/', __FILE__ );
 
 	return $api;
 }

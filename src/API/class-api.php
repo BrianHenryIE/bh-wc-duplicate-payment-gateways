@@ -42,7 +42,7 @@ class API implements API_Interface {
 	 * @see Payment_Gateways::add_gateways()
 	 *
 	 * NB: Does not check if the gateway id is set in the parent class constructor (which would usually make a
-	 * gateway ineligible for duplication).
+	 * gateway ineligible for duplication). This step is done in the UI, so useful but not foolproof.
 	 *
 	 * @used-by AJAX::add_new_duplicate_payment_gateway()
 	 *
@@ -83,7 +83,7 @@ class API implements API_Interface {
 		}
 
 		/**
-		 * TODO: Check the max number ollowed.
+		 * TODO: Check the max number allowed.
 		 *
 		 * @see Payment_Gateways::MAX_DUPLICATE_GATEWAYS
 		 */

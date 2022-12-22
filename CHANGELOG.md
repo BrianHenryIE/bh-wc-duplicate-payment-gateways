@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.3 2022-07-26
+
+* Allow duplicating gateways whose constructors parameters all have default values.
+
 ## 1.4.2 2021-09-28
 
 * Increase max number of existing gateways that can be assessed for duplicating from 10 to 30.

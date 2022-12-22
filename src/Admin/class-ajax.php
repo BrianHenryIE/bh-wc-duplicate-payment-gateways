@@ -39,8 +39,8 @@ class AJAX {
 
 		$posted = (array) wc_clean( $_POST );
 
-		$gateway_id   = $posted['gateway_id'];
-		$duplicate_id = $posted['duplicate_id'];
+		$gateway_id   = strtolower( $posted['gateway_id'] );
+		$duplicate_id = strtolower( $posted['duplicate_id'] );
 
 		$result = $this->api->add_new_duplicate_payment_gateway( $gateway_id, $duplicate_id );
 

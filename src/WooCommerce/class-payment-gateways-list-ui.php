@@ -8,6 +8,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
+use ReflectionClass;
 use WC_Payment_Gateway;
 
 /**
@@ -96,12 +97,17 @@ class Payment_Gateways_List_UI {
 		}
 
 		// We cannot duplicate gateways that have constructor arguments (i.e. the WooCommerce-Payments plugin).
-		$class                      = new \ReflectionClass( get_class( $gateway_to_copy ) );
-		$constructor                = $class->getConstructor();
-		$constructor_paramter_count = $constructor->getNumberOfParameters();
+		$class                       = new ReflectionClass( get_class( $gateway_to_copy ) );
+		$constructor                 = $class->getConstructor();
+		$constructor_parameter_count = $constructor->getNumberOfParameters();
 
-		if ( 0 < $constructor_paramter_count ) {
-			return false;
+		if ( 0 < $constructor_parameter_count ) {
+			$parameters = $constructor->getParameters();
+			foreach ( $parameters as $reflection_parameter ) {
+				if ( ! $reflection_parameter->isDefaultValueAvailable() ) {
+					return false;
+				}
+			}
 		}
 
 		static $count = 0;

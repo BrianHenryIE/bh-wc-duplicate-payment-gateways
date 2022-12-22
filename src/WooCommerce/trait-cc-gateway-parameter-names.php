@@ -18,6 +18,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use WC_Payment_Gateway;
+use WC_Payment_Gateway_CC;
 
 /**
  * Override and call parent WC_Payment_Gateway::validate_fields().
@@ -35,7 +36,7 @@ trait CC_Gateway_Parameter_Names_Trait {
 	 */
 	public function validate_fields() {
 
-		if ( $this instanceof \WC_Payment_Gateway_CC ) {
+		if ( $this instanceof WC_Payment_Gateway_CC ) {
 
 			$this_subclass_id = $this->id;
 
