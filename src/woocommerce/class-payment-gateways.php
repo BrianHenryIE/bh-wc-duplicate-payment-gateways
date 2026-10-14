@@ -68,7 +68,7 @@ class Payment_Gateways {
 
 			if ( isset( $this->cached_gateways[ $new_id ] ) ) {
 				$gateways[] = $this->cached_gateways[ $new_id ];
-				return $gateways;
+				continue;
 			}
 
 			$gateway_to_copy = $config['class_name'];

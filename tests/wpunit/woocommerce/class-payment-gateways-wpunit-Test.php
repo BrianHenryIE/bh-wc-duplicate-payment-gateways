@@ -101,4 +101,31 @@ class Payment_Gateways_WPUnit_Test extends WPTestCase {
 
 		$this->assertEmpty( $deprecations, implode( PHP_EOL, $deprecations ) );
 	}
+
+	/**
+	 * WooCommerce runs the `woocommerce_payment_gateways` filter again, e.g. `WC_Payment_Gateways::init()` after saving
+	 * the gateway order. Every duplicate should be returned each time.
+	 *
+	 * @covers ::add_gateways
+	 */
+	public function test_add_gateways_twice_returns_all_duplicates(): void {
+
+		$sut = $this->get_sut(
+			array(
+				'duplicable_test_gateway_2' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_2',
+				),
+				'duplicable_test_gateway_3' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_3',
+				),
+			)
+		);
+
+		$sut->add_gateways( array() );
+		$result = $sut->add_gateways( array() );
+
+		$this->assertCount( 2, $result );
+	}
 }
