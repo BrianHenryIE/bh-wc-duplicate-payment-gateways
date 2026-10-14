@@ -157,7 +157,6 @@ class BH_WC_Duplicate_Payment_Gateways {
 			),
 			11
 		);
-		add_filter( 'woocommerce_payment_gateways', array( $payment_gateways_list_ui, 'filter_to_only_plugin_gateways' ) );
 	}
 
 	/**
