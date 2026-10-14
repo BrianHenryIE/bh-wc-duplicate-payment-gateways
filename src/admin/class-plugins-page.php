@@ -127,5 +127,4 @@ class Plugins_Page {
 
 		return array_merge( $plugin_links, $links_array );
 	}
-
 }

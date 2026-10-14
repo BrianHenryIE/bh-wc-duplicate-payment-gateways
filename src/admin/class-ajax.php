@@ -92,5 +92,4 @@ class AJAX {
 			wp_send_json_error( $result );
 		}
 	}
-
 }

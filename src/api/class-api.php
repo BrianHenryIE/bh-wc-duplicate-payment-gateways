@@ -103,7 +103,6 @@ class API implements API_Interface {
 		);
 
 		return $result;
-
 	}
 
 	/**
@@ -279,5 +278,4 @@ class API implements API_Interface {
 			? $plugin_slugs_to_gateway_ids_with_child_ids[ $query_plugin_slug ] : array();
 		return $queried_plugin_gateway_ids_with_child_ids;
 	}
-
 }

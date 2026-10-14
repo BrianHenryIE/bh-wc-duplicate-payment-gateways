@@ -38,7 +38,7 @@ class Payment_Gateway_Settings {
 
 			add_filter(
 				"woocommerce_settings_api_form_fields_{$gateway_id}",
-				function( $form_fields ) use ( $gateway ) {
+				function ( $form_fields ) use ( $gateway ) {
 					return $this->add_extra_gateway_settings_page( $form_fields, $gateway );
 				},
 				20,
@@ -48,7 +48,6 @@ class Payment_Gateway_Settings {
 			add_action( "woocommerce_update_options_payment_gateways_{$gateway_id}", array( $this, 'save_settings' ) );
 
 		}
-
 	}
 
 	/**
@@ -146,7 +145,5 @@ class Payment_Gateway_Settings {
 				$gateway->update_option( $option_name, $option_value );
 			}
 		}
-
 	}
-
 }

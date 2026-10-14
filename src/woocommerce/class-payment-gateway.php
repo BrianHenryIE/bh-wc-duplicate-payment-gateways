@@ -56,5 +56,4 @@ class Payment_Gateway {
 
 		return $method_description;
 	}
-
 }

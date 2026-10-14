@@ -163,5 +163,4 @@ class BH_WC_Duplicate_Payment_Gateways {
 		add_action( 'wp_ajax_add_new_duplicate_payment_gateway', array( $ajax, 'add_new_duplicate_payment_gateway' ) );
 		add_action( 'wp_ajax_delete_duplicate_payment_gateway', array( $ajax, 'delete_duplicate_payment_gateway' ) );
 	}
-
 }

@@ -52,7 +52,6 @@ class Admin_Assets {
 		$version = $this->settings->get_plugin_version();
 
 		wp_enqueue_style( 'bh-wc-duplicate-payment-gateways', $url, array(), $version, 'all' );
-
 	}
 
 	/**
@@ -86,5 +85,4 @@ EOD;
 			$script
 		);
 	}
-
 }

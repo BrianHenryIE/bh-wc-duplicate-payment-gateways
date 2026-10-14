@@ -96,7 +96,7 @@ class Payment_Gateways_List_UI {
 	 *
 	 * phpcs:disable Squiz.Commenting.FunctionComment.Missing
 	 */
-	protected function is_safe_to_duplicate( WC_Payment_Gateway $gateway_to_copy ) : bool {
+	protected function is_safe_to_duplicate( WC_Payment_Gateway $gateway_to_copy ): bool {
 
 		// We won't duplicate duplicates.
 		if ( $gateway_to_copy instanceof Gateway_Copy_Interface ) {
@@ -104,9 +104,9 @@ class Payment_Gateways_List_UI {
 		}
 
 		// We cannot duplicate gateways that have constructor arguments (i.e. the WooCommerce-Payments plugin).
-		$class                       = new ReflectionClass( get_class( $gateway_to_copy ) );
-		$constructor                 = $class->getConstructor();
-		if( is_null( $constructor ) ) {
+		$class       = new ReflectionClass( get_class( $gateway_to_copy ) );
+		$constructor = $class->getConstructor();
+		if ( is_null( $constructor ) ) {
 			// Something went wrong.
 			return false;
 		}
@@ -131,6 +131,7 @@ class Payment_Gateways_List_UI {
 			case 0:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_0 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -142,6 +143,7 @@ class Payment_Gateways_List_UI {
 			case 1:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_1 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -153,6 +155,7 @@ class Payment_Gateways_List_UI {
 			case 2:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_2 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -164,6 +167,7 @@ class Payment_Gateways_List_UI {
 			case 3:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_3 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						parent::__construct();
@@ -173,6 +177,7 @@ class Payment_Gateways_List_UI {
 			case 4:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_4 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -184,6 +189,7 @@ class Payment_Gateways_List_UI {
 			case 5:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_5 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -195,6 +201,7 @@ class Payment_Gateways_List_UI {
 			case 6:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_6 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -216,6 +223,7 @@ class Payment_Gateways_List_UI {
 			case 8:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_8 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -227,6 +235,7 @@ class Payment_Gateways_List_UI {
 			case 9:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_9 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -239,6 +248,7 @@ class Payment_Gateways_List_UI {
 			case 10:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_10 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -251,6 +261,7 @@ class Payment_Gateways_List_UI {
 			case 11:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_11 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -262,6 +273,7 @@ class Payment_Gateways_List_UI {
 			case 12:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_12 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -273,6 +285,7 @@ class Payment_Gateways_List_UI {
 			case 13:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_13 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						parent::__construct();
@@ -282,6 +295,7 @@ class Payment_Gateways_List_UI {
 			case 14:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_14 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -293,6 +307,7 @@ class Payment_Gateways_List_UI {
 			case 15:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_15 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -304,6 +319,7 @@ class Payment_Gateways_List_UI {
 			case 16:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_16 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -325,6 +341,7 @@ class Payment_Gateways_List_UI {
 			case 18:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_18 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -336,6 +353,7 @@ class Payment_Gateways_List_UI {
 			case 19:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_19 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -348,6 +366,7 @@ class Payment_Gateways_List_UI {
 			case 20:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_20 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -360,6 +379,7 @@ class Payment_Gateways_List_UI {
 			case 21:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_21 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -371,6 +391,7 @@ class Payment_Gateways_List_UI {
 			case 22:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_22 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -382,6 +403,7 @@ class Payment_Gateways_List_UI {
 			case 23:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_23 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						parent::__construct();
@@ -391,6 +413,7 @@ class Payment_Gateways_List_UI {
 			case 24:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_24 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -402,6 +425,7 @@ class Payment_Gateways_List_UI {
 			case 25:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_25 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -413,6 +437,7 @@ class Payment_Gateways_List_UI {
 			case 26:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_26 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -434,6 +459,7 @@ class Payment_Gateways_List_UI {
 			case 28:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_28 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -445,6 +471,7 @@ class Payment_Gateways_List_UI {
 			case 29:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_29 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -457,6 +484,7 @@ class Payment_Gateways_List_UI {
 			case 30:
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_30 implements Gateway_Copy_Interface {
 					use CC_Gateway_Parameter_Names_Trait;
+
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
 						if ( is_callable( 'parent::__construct' ) ) {
@@ -471,7 +499,7 @@ class Payment_Gateways_List_UI {
 				throw new \Exception( 'Too many duplicate gateways.' );
 		}
 
-		$count++;
+		++$count;
 
 		// If the id has been correctly set, the gateway can be duplicated.
 		return $duplicate_gateway->id === $duplicate_id;
@@ -486,7 +514,7 @@ class Payment_Gateways_List_UI {
 	 *
 	 * @hooked admin_enqueue_scripts
 	 */
-	public function enqueue_css_to_hide_toggle_for_hidden_gateways():void {
+	public function enqueue_css_to_hide_toggle_for_hidden_gateways(): void {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['page'] )
@@ -520,7 +548,6 @@ class Payment_Gateways_List_UI {
 		}
 
 		wp_add_inline_style( 'bh-wc-duplicate-payment-gateways', $css );
-
 	}
 
 	/**
@@ -541,8 +568,8 @@ class Payment_Gateways_List_UI {
 	public function filter_to_only_plugin_gateways( array $gateways ): array {
 
 		if ( ! isset( $_GET['page'] ) || 'wc-settings' !== $_GET['page']
-			 || ! isset( $_GET['tab'] ) || 'checkout' !== $_GET['tab']
-			 || ! isset( $_GET['duplicates'] ) ) {
+			|| ! isset( $_GET['tab'] ) || 'checkout' !== $_GET['tab']
+			|| ! isset( $_GET['duplicates'] ) ) {
 			return $gateways;
 		}
 

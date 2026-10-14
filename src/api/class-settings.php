@@ -21,7 +21,7 @@ class Settings implements Settings_Interface {
 	 *
 	 * @return array<string, array{class_name:string, new_id:string}> Keyed by duplicate gateway id.
 	 */
-	public function get_configs() :array {
+	public function get_configs(): array {
 
 		return get_option( self::OPTION_NAME, array() );
 	}
@@ -88,5 +88,4 @@ class Settings implements Settings_Interface {
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME
 			: 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
 	}
-
 }
