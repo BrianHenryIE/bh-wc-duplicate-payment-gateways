@@ -103,11 +103,13 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 	protected function define_plugins_page_hooks(): void {
 
-		$plugins_page = new Plugins_Page();
+		$plugins_page = new Plugins_Page( $this->api );
 
 		$basename = 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
 
 		add_filter( "plugin_action_links_{$basename}", array( $plugins_page, 'action_links' ) );
+
+		add_filter( 'plugin_action_links', array( $plugins_page, 'add_gateways_plugins_hooks' ), 10, 4 );
 	}
 
 
@@ -136,7 +138,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 	protected function define_woocommerce_payment_gateways_list_ui_hooks(): void {
 
-		$payment_gateways_list_ui = new Payment_Gateways_List_UI();
+		$payment_gateways_list_ui = new Payment_Gateways_List_UI( $this->api );
 
 		add_filter( 'woocommerce_payment_gateways_setting_columns', array( $payment_gateways_list_ui, 'add_column' ) );
 		add_action( 'woocommerce_payment_gateways_setting_column_duplicate', array( $payment_gateways_list_ui, 'print_column_for_duplicate_ui' ) );
@@ -148,6 +150,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 			),
 			11
 		);
+		add_filter( 'woocommerce_payment_gateways', array( $payment_gateways_list_ui, 'filter_to_only_plugin_gateways' ) );
 	}
 
 	/**

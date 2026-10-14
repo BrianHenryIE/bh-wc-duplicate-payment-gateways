@@ -40,4 +40,5 @@ interface API_Interface {
 	 */
 	public function delete_duplicate_payment_gateway( string $duplicate_id ): array;
 
+	public function get_plugin_gateways( string $basename_or_slug ): array;
 }

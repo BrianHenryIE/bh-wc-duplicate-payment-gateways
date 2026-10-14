@@ -2,7 +2,7 @@ parameters:
     level: 8
     paths:
         - src
-        - plugin-slug.php
+        - bh-wc-duplicate-payment-gateways.php
         - autoload.php
         - uninstall.php
     excludePaths:
@@ -18,7 +18,7 @@ parameters:
         - vendor/antecedent/patchwork/Patchwork.php
     scanDirectories:
         - vendor-prefixed
-#        - wp-content/plugins/...
+        - wp-content/plugins/woocommerce
         - vendor/wp-cli
     ignoreErrors:
         # LoggerAwareTrait allows for null $logger, but we set it in the constructor.
@@ -29,3 +29,9 @@ parameters:
         # - '/Parameter .* of .* expects .* given\./'
         # Setting an empty array with type associative array in the PhpDoc prints this.
         - '/does not accept default value of type array\(\)/'
+        # Because class_alias() is being used, with a variable string, the parent class is not being detected
+        - '/Anonymous class extends unknown class/'
+        - '/does not extend any class\./'
+        - '/Method BrianHenryIE\\WC_Duplicate_Payment_Gateways\\WooCommerce\\Payment_Gateways::add_gateways.. should return array<string|WC_Payment_Gateway> but returns/'
+        - '/Property BrianHenryIE\\WC_Duplicate_Payment_Gateways\\WooCommerce\\Payment_Gateways::\$cached_gateways .array<string, WC_Payment_Gateway>. does not accept/'
+        - '/Access to an undefined property class@anonymous.*::\$id\./'

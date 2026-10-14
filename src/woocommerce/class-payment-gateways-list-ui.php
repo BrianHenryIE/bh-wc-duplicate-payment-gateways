@@ -8,6 +8,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use ReflectionClass;
 use WC_Payment_Gateway;
 
@@ -17,6 +18,12 @@ use WC_Payment_Gateway;
  * @see WC_Settings_Payment_Gateways::payment_gateways_setting()
  */
 class Payment_Gateways_List_UI {
+
+	protected API_Interface $api;
+
+	public function __construct( API_Interface $api ) {
+		$this->api = $api;
+	}
 
 	/**
 	 * Add a 'duplicate' column after the 'sort' column.
@@ -99,6 +106,10 @@ class Payment_Gateways_List_UI {
 		// We cannot duplicate gateways that have constructor arguments (i.e. the WooCommerce-Payments plugin).
 		$class                       = new ReflectionClass( get_class( $gateway_to_copy ) );
 		$constructor                 = $class->getConstructor();
+		if( is_null( $constructor ) ) {
+			// Something went wrong.
+			return false;
+		}
 		$constructor_parameter_count = $constructor->getNumberOfParameters();
 
 		if ( 0 < $constructor_parameter_count ) {
@@ -510,5 +521,57 @@ class Payment_Gateways_List_UI {
 
 		wp_add_inline_style( 'bh-wc-duplicate-payment-gateways', $css );
 
+	}
+
+	/**
+	 * When linking to WooCommerce/Settings/Payments from plugins.php, filter to only instances of the specified gateway.
+	 *
+	 * The plugins.php code checks for multiple instances of the gateway, then uses the `duplicates=plugin-slug`
+	 * parameter on the Settings link to invoke this function.
+	 *
+	 * e.g. `wp-admin/admin.php?page=wc-settings&tab=checkout&class=bh-wc-venmo-gateway`.
+	 *
+	 * @hooked woocommerce_payment_gateways
+	 * @see WC_Payment_Gateways::init()
+	 *
+	 * @param array<string|WC_Payment_Gateway> $gateways WC_Payment_Gateway subclass instance or class names of payment gateways registered with WooCommerce.
+	 *
+	 * @return array<string|WC_Payment_Gateway>
+	 */
+	public function filter_to_only_plugin_gateways( array $gateways ): array {
+
+		if ( ! isset( $_GET['page'] ) || 'wc-settings' !== $_GET['page']
+			 || ! isset( $_GET['tab'] ) || 'checkout' !== $_GET['tab']
+			 || ! isset( $_GET['duplicates'] ) ) {
+			return $gateways;
+		}
+
+		$plugin_slug = $_GET['duplicates'];
+
+		$plugin_gateways = $this->api->get_plugin_gateways( $plugin_slug );
+		$gateway_ids     = array();
+		foreach ( $plugin_gateways as $primary_id => $child_ids ) {
+			$gateway_ids[] = $primary_id;
+			$gateway_ids   = array_merge( $gateway_ids, $child_ids );
+		}
+
+		$filtered = array();
+		foreach ( $gateways as $index => $gateway ) {
+
+			if ( is_string( $gateway ) && class_exists( $gateway ) ) {
+				/** @var WC_Payment_Gateway $gateway_instance */
+				$gateway_instance = new $gateway();
+				$gateway_id       = $gateway_instance->id;
+			}
+			if ( $gateway instanceof WC_Payment_Gateway ) {
+				$gateway_id = $gateway->id;
+			}
+
+			if ( in_array( $gateway_id, $gateway_ids, true ) ) {
+				$filtered[ $index ] = $gateway;
+			}
+		}
+
+		return $filtered;
 	}
 }

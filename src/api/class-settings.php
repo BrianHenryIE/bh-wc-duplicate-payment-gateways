@@ -34,7 +34,7 @@ class Settings implements Settings_Interface {
 	 */
 	public function add_new_duplicate( string $id, string $super_class ): void {
 
-		$config = get_option( self::OPTION_NAME, array() );
+		$config = $this->get_configs();
 
 		$config[ $id ] = array(
 			'class_name' => $super_class,
@@ -50,7 +50,7 @@ class Settings implements Settings_Interface {
 	 * @param string $duplicate_gateway_id The id of the duplicate gateway to remove.
 	 */
 	public function delete_duplicate( string $duplicate_gateway_id ): void {
-		$config = get_option( self::OPTION_NAME, array() );
+		$config = $this->get_configs();
 
 		if ( empty( $config ) ) {
 			return;
@@ -78,12 +78,15 @@ class Settings implements Settings_Interface {
 	 * @return string
 	 */
 	public function get_plugin_version(): string {
-		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION' ) ? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION : '1.5.4';
+		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION' )
+			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION
+			: '1.5.4';
 	}
 
 	public function get_plugin_basename() {
 		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME' )
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME
-			: '/bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
+			: 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
 	}
+
 }

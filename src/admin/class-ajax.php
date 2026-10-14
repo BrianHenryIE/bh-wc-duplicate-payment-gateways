@@ -44,7 +44,6 @@ class AJAX {
 				'message' => 'nonce failure',
 			);
 			wp_send_json_error( $result );
-			die();
 		}
 
 		$posted = (array) wc_clean( $_POST );
@@ -75,7 +74,6 @@ class AJAX {
 				'message' => 'nonce failure',
 			);
 			wp_send_json_error( $result );
-			die();
 		}
 
 		$posted = (array) wc_clean( $_POST );

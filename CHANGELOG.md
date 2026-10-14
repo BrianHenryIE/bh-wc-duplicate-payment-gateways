@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+
+* Add "Gateways" link on every plugin on plugins.php that has duplicated gateways.
+
 ## 1.5.3 2022-07-26
 
 * Allow duplicating gateways whose constructors parameters all have default values.

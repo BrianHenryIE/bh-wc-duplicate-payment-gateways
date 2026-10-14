@@ -2,6 +2,8 @@
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
+use BrianHenryIE\ColorLogger\ColorLogger;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use WC_Gateway_BACS;
 
@@ -31,7 +33,5 @@ class Payment_Gateways_WPUnit_Test extends \Codeception\TestCase\WPTestCase {
 		$this->assertCount( 1, $result );
 
 	}
-
-
 
 }

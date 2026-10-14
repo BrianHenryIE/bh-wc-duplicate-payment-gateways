@@ -159,4 +159,125 @@ class API implements API_Interface {
 		return $result;
 	}
 
+
+	/**
+	 * Given a plugin slug or basename, get the list of related extended gateways.
+	 *
+	 * Used on plugins.php to maybe edit the action links (to link to the list of gateways).
+	 *
+	 * @param string $basename_or_slug
+	 *
+	 * @return array<string,string[]> List of the plugin's gateway ids and each one's children's ids.
+	 */
+	public function get_plugin_gateways( string $basename_or_slug ): array {
+
+		if ( 1 !== preg_match( '/^[\w_-]*/', $basename_or_slug, $slug_output_array ) || empty( $slug_output_array[0] ) ) {
+			// Something went wrong.
+			return array();
+		}
+
+		$query_plugin_slug = $slug_output_array[0];
+
+		// The duplicates.
+		/** @var array<string, array{class_name:string,new_id:string}> $config */
+		$extended_payment_gateways = $this->settings->get_configs();
+
+		if ( empty( $extended_payment_gateways ) ) {
+			return array();
+		}
+
+		/**
+		 * Use a static property to avoid recalculating the rest.
+		 *
+		 * @var array<string, array<string, string[]>>  $plugin_slugs_to_gateway_ids_with_child_ids
+		 */
+		static $plugin_slugs_to_gateway_ids_with_child_ids = null;
+		if ( is_array( $plugin_slugs_to_gateway_ids_with_child_ids ) ) {
+			$queried_plugin_gateway_ids_with_child_ids = isset( $plugin_slugs_to_gateway_ids_with_child_ids[ $query_plugin_slug ] )
+			? $plugin_slugs_to_gateway_ids_with_child_ids[ $query_plugin_slug ] : array();
+			return $queried_plugin_gateway_ids_with_child_ids;
+		}
+
+		$plugin_slugs_to_gateway_ids_with_child_ids = array();
+
+		$plugin_slugs_to_gateways    = array();
+		$gateway_ids_to_plugin_slugs = array();
+		$plugin_slugs_to_gateway_ids = array();
+
+		// ** @var array<string, \WC_Payment_Gateway> $wc_payment_gateways */
+		$gateway_ids_to_classes = WC()->payment_gateways()->payment_gateways();
+
+		$gateway_classnames_to_ids = array();
+
+		foreach ( $gateway_ids_to_classes as $id => $gateway_class ) {
+
+			$gateway_classnames_to_ids[ get_class( $gateway_class ) ] = $id;
+
+			$reflected_gateway = new \ReflectionObject( $gateway_class );
+			$file              = $reflected_gateway->getFileName();
+
+			// This deals with symlinks.
+			$plugin_subdir_file = plugin_basename( $file );
+
+			if ( 1 !== preg_match( '/^[\w_-]*/', $plugin_subdir_file, $output_array ) || empty( $output_array[0] ) ) {
+				// Something went wrong.
+				continue;
+			}
+			$plugin_slug = $output_array[0];
+
+			$gateway_ids_to_plugin_slugs[ $id ] = $plugin_slug;
+
+			if ( ! isset( $plugin_slugs_to_gateway_ids[ $plugin_slug ] ) ) {
+				$plugin_slugs_to_gateway_ids[ $plugin_slug ] = array();
+			}
+			$plugin_slugs_to_gateway_ids[ $plugin_slug ][] = $id;
+
+			if ( ! isset( $plugin_slugs_to_gateways[ $plugin_slug ] ) ) {
+				$plugin_slugs_to_gateways[ $plugin_slug ] = array();
+			}
+			$plugin_slugs_to_gateways[ $plugin_slug ][] = get_class( $gateway_class );
+
+		}
+
+		$gateway_classnames_to_child_ids = array();
+
+		foreach ( $extended_payment_gateways as $child_id => $config ) {
+
+			$parent_gateway_classname = $config['class_name'];
+
+			if ( ! isset( $gateway_classnames_to_child_ids[ $parent_gateway_classname ] ) ) {
+				$gateway_classnames_to_child_ids[ $parent_gateway_classname ] = array();
+			}
+
+			$gateway_classnames_to_child_ids[ $parent_gateway_classname ][] = $child_id;
+		}
+
+		// Next figure the id of the parent gateway.
+
+		$parent_gateway_ids_to_child_ids = array();
+
+		foreach ( $gateway_classnames_to_child_ids as $gateway_classname => $child_ids ) {
+			$parent_gateway_id = $gateway_classnames_to_ids[ $gateway_classname ];
+
+			$parent_gateway_ids_to_child_ids[ $parent_gateway_id ] = $child_ids;
+		}
+
+		foreach ( $plugin_slugs_to_gateway_ids as $plugin_slug => $gateway_ids ) {
+
+			if ( ! isset( $plugin_slugs_to_gateway_ids_with_child_ids[ $plugin_slug ] ) ) {
+				$plugin_slugs_to_gateway_ids_with_child_ids[ $plugin_slug ] = array();
+			}
+
+			foreach ( $gateway_ids as $gateway_id ) {
+
+				$child_ids = isset( $parent_gateway_ids_to_child_ids[ $gateway_id ] ) ? $parent_gateway_ids_to_child_ids[ $gateway_id ] : array();
+				$plugin_slugs_to_gateway_ids_with_child_ids[ $plugin_slug ][ $gateway_id ] = $child_ids;
+			}
+		}
+
+		$queried_plugin_gateway_ids_with_child_ids = isset( $plugin_slugs_to_gateway_ids_with_child_ids[ $query_plugin_slug ] )
+			? $plugin_slugs_to_gateway_ids_with_child_ids[ $query_plugin_slug ] : array();
+		return $queried_plugin_gateway_ids_with_child_ids;
+	}
+
 }
