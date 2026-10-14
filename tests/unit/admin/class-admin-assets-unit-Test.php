@@ -35,7 +35,7 @@ class Admin_Assets_Test extends \Codeception\Test\Unit {
 	 * @covers ::enqueue_styles
 	 * @see wp_enqueue_style()
 	 */
-	public function test_enqueue_styles() {
+	public function test_enqueue_styles(): void {
 
 		global $plugin_root_dir;
 
@@ -82,7 +82,7 @@ class Admin_Assets_Test extends \Codeception\Test\Unit {
 	 * @covers ::enqueue_scripts
 	 * @see wp_enqueue_script()
 	 */
-	public function test_enqueue_scripts() {
+	public function test_enqueue_scripts(): void {
 
 		global $plugin_root_dir;
 
@@ -119,8 +119,7 @@ class Admin_Assets_Test extends \Codeception\Test\Unit {
 		\WP_Mock::userFunction(
 			'wp_json_encode',
 			array(
-				// 'args'  => array( \WP_Mock\Functions::type( 'array' ) ),
-								'return' => '{"json"=>"json"}',
+				'return' => '{"json"=>"json"}',
 			)
 		);
 

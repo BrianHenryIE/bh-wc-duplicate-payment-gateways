@@ -10,7 +10,7 @@ use WC_Gateway_BACS;
 class Payment_Gateways_WPUnit_Test extends \Codeception\TestCase\WPTestCase {
 
 
-	public function test_add_gateways() {
+	public function test_add_gateways(): void {
 
 		$configs = array(
 			array(
@@ -31,7 +31,5 @@ class Payment_Gateways_WPUnit_Test extends \Codeception\TestCase\WPTestCase {
 		$result = $sut->add_gateways( array() );
 
 		$this->assertCount( 1, $result );
-
 	}
-
 }

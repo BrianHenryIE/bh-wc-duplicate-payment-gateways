@@ -21,7 +21,7 @@ class BH_WC_Duplicate_Payment_Gateways_Integration_Test extends \Codeception\Tes
 	/**
 	 * Verify admin_enqueue_scripts action is correctly added for styles, at priority 10.
 	 */
-	public function test_action_admin_enqueue_scripts_styles() {
+	public function test_action_admin_enqueue_scripts_styles(): void {
 
 		$action_name       = 'admin_enqueue_scripts';
 		$expected_priority = 10;
@@ -36,7 +36,7 @@ class BH_WC_Duplicate_Payment_Gateways_Integration_Test extends \Codeception\Tes
 	/**
 	 * Verify admin_enqueue_scripts action is added for scripts, at priority 10.
 	 */
-	public function test_action_admin_enqueue_scripts_scripts() {
+	public function test_action_admin_enqueue_scripts_scripts(): void {
 
 		$action_name       = 'admin_enqueue_scripts';
 		$expected_priority = 10;
@@ -51,7 +51,7 @@ class BH_WC_Duplicate_Payment_Gateways_Integration_Test extends \Codeception\Tes
 	/**
 	 * Verify action to call load textdomain is added.
 	 */
-	public function test_action_plugins_loaded_load_plugin_textdomain() {
+	public function test_action_plugins_loaded_load_plugin_textdomain(): void {
 
 		$action_name       = 'plugins_loaded';
 		$expected_priority = 10;
@@ -61,11 +61,10 @@ class BH_WC_Duplicate_Payment_Gateways_Integration_Test extends \Codeception\Tes
 		$function_is_hooked = $this->is_function_hooked_on_action( $class_type, $method_name, $action_name, $expected_priority );
 
 		$this->assertNotFalse( $function_is_hooked );
-
 	}
 
 
-	protected function is_function_hooked_on_action( $class_type, $method_name, $action_name, $expected_priority = 10 ) {
+	protected function is_function_hooked_on_action( string $class_type, string $method_name, string $action_name, int $expected_priority = 10 ): bool {
 
 		global $wp_filter;
 

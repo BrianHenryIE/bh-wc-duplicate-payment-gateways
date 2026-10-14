@@ -23,7 +23,9 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 		\WP_Mock::setUp();
 	}
 
-	// This is required for `'times' => 1` to be verified.
+	/**
+	 * This is required for `'times' => 1` to be verified.
+	 */
 	protected function tearDown(): void {
 		parent::_tearDown();
 		\WP_Mock::tearDown();
@@ -32,7 +34,7 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 	/**
 	 * @covers ::set_locale
 	 */
-	public function test_set_locale_hooked() {
+	public function test_set_locale_hooked(): void {
 
 		\WP_Mock::expectActionAdded(
 			'plugins_loaded',
@@ -47,7 +49,7 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 	/**
 	 * @covers ::define_admin_hooks
 	 */
-	public function test_admin_hooks() {
+	public function test_admin_hooks(): void {
 
 		\WP_Mock::expectActionAdded(
 			'admin_enqueue_scripts',
@@ -63,5 +65,4 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 		$settings = $this->makeEmpty( Settings_Interface::class );
 		new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
 	}
-
 }

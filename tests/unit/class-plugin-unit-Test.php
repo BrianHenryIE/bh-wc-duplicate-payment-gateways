@@ -27,12 +27,11 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 	/**
 	 * Verifies the plugin initialization.
 	 */
-	public function test_plugin_include() {
+	public function test_plugin_include(): void {
 
-		// Prevents code-coverage counting, and removes the need to define the WordPress functions that are used in that class.
 		\Patchwork\redefine(
 			array( BH_WC_Duplicate_Payment_Gateways::class, '__construct' ),
-			function( $api, $settings ) {}
+			function ( $api, $settings ) {}
 		);
 
 		global $plugin_root_dir;
@@ -46,54 +45,20 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 		);
 
 		\WP_Mock::userFunction(
+			'plugin_basename',
+			array(
+				'args'   => array( \WP_Mock\Functions::type( 'string' ) ),
+				'return' => 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php',
+			)
+		);
+
+		\WP_Mock::userFunction(
 			'register_activation_hook'
 		);
 
 		\WP_Mock::userFunction(
 			'register_deactivation_hook'
 		);
-
-		// \WP_Mock::userFunction(
-		// 'get_option',
-		// array(
-		// 'args'   => array( 'bh-wc-shipment-tracking-updates-log-level', 'notice' ),
-		// 'return' => 'notice',
-		// )
-		// );
-
-		// \WP_Mock::userFunction(
-		// 'get_option',
-		// array(
-		// 'args'   => array( 'active_plugins' ),
-		// 'return' => array(),
-		// )
-		// );
-
-		// \WP_Mock::userFunction(
-		// 'is_admin',
-		// array(
-		// 'return_arg' => false,
-		// )
-		// );
-
-		// \WP_Mock::userFunction(
-		// 'get_current_user_id'
-		// );
-		//
-		// \WP_Mock::userFunction(
-		// 'wp_normalize_path',
-		// array(
-		// 'return_arg' => true,
-		// )
-		// );
-
-		// \WP_Mock::userFunction(
-		// 'get_option',
-		// array(
-		// 'args'   => array( 'bh_wc_duplicate_payment_gateways_log_level', 'info' ),
-		// 'return' => 'info',
-		// )
-		// );
 
 		ob_start();
 
@@ -108,7 +73,5 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 		$this->assertArrayHasKey( 'bh_wc_duplicate_payment_gateways', $GLOBALS );
 
 		$this->assertInstanceOf( API_Interface::class, $GLOBALS['bh_wc_duplicate_payment_gateways'] );
-
 	}
-
 }
