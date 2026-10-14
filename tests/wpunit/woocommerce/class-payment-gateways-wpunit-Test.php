@@ -66,4 +66,39 @@ class Payment_Gateways_WPUnit_Test extends WPTestCase {
 
 		$this->assertCount( 1, $result );
 	}
+
+	/**
+	 * `is_callable( 'parent::__construct' )` is deprecated since PHP 8.2.
+	 *
+	 * @covers ::add_gateways
+	 */
+	public function test_add_gateways_no_deprecations(): void {
+
+		$sut = $this->get_sut(
+			array(
+				'duplicable_test_gateway_2' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_2',
+				),
+			)
+		);
+
+		$deprecations = array();
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
+		set_error_handler(
+			function ( int $errno, string $errstr ) use ( &$deprecations ): bool {
+				$deprecations[] = $errstr;
+				return true;
+			},
+			E_DEPRECATED
+		);
+
+		try {
+			$sut->add_gateways( array() );
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertEmpty( $deprecations, implode( PHP_EOL, $deprecations ) );
+	}
 }

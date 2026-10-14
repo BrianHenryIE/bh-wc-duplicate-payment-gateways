@@ -134,7 +134,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -146,7 +146,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -158,7 +158,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -170,7 +170,9 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						parent::__construct();
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
+							parent::__construct();
+						}
 					}
 				};
 				break;
@@ -180,7 +182,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -192,7 +194,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -204,7 +206,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -214,7 +216,7 @@ class Payment_Gateways_List_UI {
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_7 {
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -226,7 +228,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -238,7 +240,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
@@ -251,7 +253,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
@@ -264,7 +266,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -276,7 +278,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -288,7 +290,9 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						parent::__construct();
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
+							parent::__construct();
+						}
 					}
 				};
 				break;
@@ -298,7 +302,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -310,7 +314,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -322,7 +326,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -332,7 +336,7 @@ class Payment_Gateways_List_UI {
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_17 {
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -344,7 +348,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -356,7 +360,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
@@ -369,7 +373,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
@@ -382,7 +386,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -394,7 +398,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -406,7 +410,9 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						parent::__construct();
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
+							parent::__construct();
+						}
 					}
 				};
 				break;
@@ -416,7 +422,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -428,7 +434,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -440,7 +446,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -450,7 +456,7 @@ class Payment_Gateways_List_UI {
 				$duplicate_gateway = new class( $duplicate_id ) extends Attempt_Duplicate_Gateway_27 {
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -462,7 +468,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 					}
@@ -474,7 +480,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
@@ -487,7 +493,7 @@ class Payment_Gateways_List_UI {
 
 					public function __construct( string $duplicate_id ) {
 						$this->id = $duplicate_id;
-						if ( is_callable( 'parent::__construct' ) ) {
+						if ( method_exists( (string) get_parent_class( $this ), '__construct' ) ) {
 							parent::__construct();
 						}
 						$this->id = $duplicate_id;
