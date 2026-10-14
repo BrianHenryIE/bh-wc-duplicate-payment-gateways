@@ -9,6 +9,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin_Assets;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes\I18n;
 use WP_Mock\Matcher\AnyInstance;
 
@@ -43,7 +44,7 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 
 		$api      = $this->makeEmpty( API_Interface::class );
 		$settings = $this->makeEmpty( Settings_Interface::class );
-		new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
+		new BH_WC_Duplicate_Payment_Gateways( $api, $settings, new Gateway_Duplicability() );
 	}
 
 	/**
@@ -63,6 +64,6 @@ class BH_WC_Duplicate_Payment_Gateways_Unit_Test extends \Codeception\Test\Unit 
 
 		$api      = $this->makeEmpty( API_Interface::class );
 		$settings = $this->makeEmpty( Settings_Interface::class );
-		new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
+		new BH_WC_Duplicate_Payment_Gateways( $api, $settings, new Gateway_Duplicability() );
 	}
 }

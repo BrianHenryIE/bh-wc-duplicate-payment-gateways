@@ -21,7 +21,7 @@ class Payment_Gateways_List_UI_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_add_column_after_action(): void {
 
-		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ) );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
 		$result = $sut->add_column(
 			array(
@@ -41,7 +41,7 @@ class Payment_Gateways_List_UI_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_print_column_duplicable_gateway_has_add_button(): void {
 
-		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ) );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
 		ob_start();
 		$sut->print_column_for_duplicate_ui( new Duplicable_Test_Gateway() );
@@ -58,7 +58,7 @@ class Payment_Gateways_List_UI_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_print_column_cheque_has_no_add_button(): void {
 
-		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ) );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
 		ob_start();
 		$sut->print_column_for_duplicate_ui( new WC_Gateway_Cheque() );

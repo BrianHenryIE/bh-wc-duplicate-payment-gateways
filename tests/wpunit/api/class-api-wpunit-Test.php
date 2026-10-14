@@ -8,6 +8,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Duplicable_Test_Gateway;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use Codeception\TestCase\WPTestCase;
 
 /**
@@ -43,7 +44,7 @@ class API_WPUnit_Test extends WPTestCase {
 	public function test_add_new_duplicate_saves_config(): void {
 
 		$settings = new Settings();
-		$sut      = new API( $settings );
+		$sut      = new API( $settings, new Gateway_Duplicability() );
 
 		$result = $sut->add_new_duplicate_payment_gateway( 'duplicable_test_gateway', 'duplicable_test_gateway_2' );
 
@@ -59,7 +60,7 @@ class API_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_add_new_duplicate_fails_when_id_exists(): void {
 
-		$sut = new API( new Settings() );
+		$sut = new API( new Settings(), new Gateway_Duplicability() );
 
 		$result = $sut->add_new_duplicate_payment_gateway( 'duplicable_test_gateway', 'cheque' );
 
@@ -71,7 +72,7 @@ class API_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_add_new_duplicate_fails_when_gateway_does_not_exist(): void {
 
-		$sut = new API( new Settings() );
+		$sut = new API( new Settings(), new Gateway_Duplicability() );
 
 		$result = $sut->add_new_duplicate_payment_gateway( 'no_such_gateway', 'no_such_gateway_2' );
 
@@ -79,11 +80,49 @@ class API_WPUnit_Test extends WPTestCase {
 	}
 
 	/**
+	 * WooCommerce's cheque gateway sets `$this->id = 'cheque'` in its constructor, so a duplicate would just be
+	 * another cheque gateway.
+	 *
+	 * @covers ::add_new_duplicate_payment_gateway
+	 */
+	public function test_add_new_duplicate_refuses_gateway_which_overwrites_its_id(): void {
+
+		$settings = new Settings();
+		$sut      = new API( $settings, new Gateway_Duplicability() );
+
+		$result = $sut->add_new_duplicate_payment_gateway( 'cheque', 'cheque_2' );
+
+		$this->assertFalse( $result['success'] );
+		$this->assertArrayNotHasKey( 'cheque_2', $settings->get_configs() );
+	}
+
+	/**
+	 * When the plugin providing the original gateway is deactivated, the duplicate is not loaded, but its config
+	 * should still be deletable.
+	 *
+	 * @covers ::delete_duplicate_payment_gateway
+	 */
+	public function test_delete_orphaned_duplicate(): void {
+
+		$settings = new Settings();
+		$settings->add_new_duplicate( 'orphan_gateway_2', 'No_Longer_Active_Gateway' );
+		update_option( 'woocommerce_orphan_gateway_2_settings', array( 'enabled' => 'yes' ) );
+
+		$sut = new API( $settings, new Gateway_Duplicability() );
+
+		$result = $sut->delete_duplicate_payment_gateway( 'orphan_gateway_2' );
+
+		$this->assertTrue( $result['success'] );
+		$this->assertArrayNotHasKey( 'orphan_gateway_2', $settings->get_configs() );
+		$this->assertFalse( get_option( 'woocommerce_orphan_gateway_2_settings' ) );
+	}
+
+	/**
 	 * @covers ::delete_duplicate_payment_gateway
 	 */
 	public function test_delete_refuses_original_gateway(): void {
 
-		$sut = new API( new Settings() );
+		$sut = new API( new Settings(), new Gateway_Duplicability() );
 
 		$result = $sut->delete_duplicate_payment_gateway( 'cheque' );
 
@@ -95,7 +134,7 @@ class API_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_get_plugin_gateways_lists_woocommerce_core_gateways(): void {
 
-		$sut = new API( new Settings() );
+		$sut = new API( new Settings(), new Gateway_Duplicability() );
 
 		// It only calculates when there are duplicates.
 		$sut->add_new_duplicate_payment_gateway( 'duplicable_test_gateway', 'duplicable_test_gateway_2' );

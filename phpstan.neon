@@ -43,4 +43,4 @@ parameters:
             identifier: function.alreadyNarrowedType
             paths:
                 - src/woocommerce/class-payment-gateways.php
-                - src/woocommerce/class-payment-gateways-list-ui.php
+                - src/woocommerce/class-gateway-duplicability.php

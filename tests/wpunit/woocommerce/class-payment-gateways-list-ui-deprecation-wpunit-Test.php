@@ -22,7 +22,7 @@ class Payment_Gateways_List_UI_Deprecation_WPUnit_Test extends WPTestCase {
 	 */
 	public function test_is_safe_to_duplicate_no_deprecations(): void {
 
-		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ) );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
 		$deprecations = array();
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler

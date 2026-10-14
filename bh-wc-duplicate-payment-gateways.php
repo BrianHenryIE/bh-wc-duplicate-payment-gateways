@@ -29,6 +29,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 
 
 // If this file is called directly, abort.
@@ -52,10 +53,11 @@ define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME', plugin_basename( __FILE__ )
  */
 function instantiate_bh_wc_duplicate_payment_gateways(): API_Interface {
 
-	$settings = new Settings();
-	$api      = new API( $settings );
+	$settings              = new Settings();
+	$gateway_duplicability = new Gateway_Duplicability();
+	$api                   = new API( $settings, $gateway_duplicability );
 
-	new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
+	new BH_WC_Duplicate_Payment_Gateways( $api, $settings, $gateway_duplicability );
 
 	// \BH_WC_Duplicate_Payment_Gateways_SLSWC_Client::get_instance( 'https://bhwp.ie/', __FILE__ );
 

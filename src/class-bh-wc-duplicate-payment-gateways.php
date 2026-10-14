@@ -18,6 +18,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway_Settings;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways;
@@ -45,6 +46,11 @@ class BH_WC_Duplicate_Payment_Gateways {
 	protected API_Interface $api;
 
 	/**
+	 * Checks can a gateway be duplicated.
+	 */
+	protected Gateway_Duplicability $gateway_duplicability;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -53,10 +59,11 @@ class BH_WC_Duplicate_Payment_Gateways {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct( API_Interface $api, Settings_Interface $settings ) {
+	public function __construct( API_Interface $api, Settings_Interface $settings, Gateway_Duplicability $gateway_duplicability ) {
 
-		$this->settings = $settings;
-		$this->api      = $api;
+		$this->settings              = $settings;
+		$this->api                   = $api;
+		$this->gateway_duplicability = $gateway_duplicability;
 
 		$this->set_locale();
 
@@ -138,7 +145,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 	protected function define_woocommerce_payment_gateways_list_ui_hooks(): void {
 
-		$payment_gateways_list_ui = new Payment_Gateways_List_UI( $this->api );
+		$payment_gateways_list_ui = new Payment_Gateways_List_UI( $this->api, $this->gateway_duplicability );
 
 		add_filter( 'woocommerce_payment_gateways_setting_columns', array( $payment_gateways_list_ui, 'add_column' ) );
 		add_action( 'woocommerce_payment_gateways_setting_column_duplicate', array( $payment_gateways_list_ui, 'print_column_for_duplicate_ui' ) );

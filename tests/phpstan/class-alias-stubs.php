@@ -3,7 +3,7 @@
  * PHPStan-only declarations for the classes created at runtime with class_alias().
  *
  * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways::add_gateways()
- * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways_List_UI::is_safe_to_duplicate()
+ * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability::attempt_duplicate()
  *
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */

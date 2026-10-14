@@ -10,6 +10,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways;
 use WC_Payment_Gateway;
 
@@ -28,12 +29,19 @@ class API implements API_Interface {
 	protected Settings_Interface $settings;
 
 	/**
+	 * Used to refuse to duplicate gateways which would overwrite the duplicate's id.
+	 */
+	protected Gateway_Duplicability $gateway_duplicability;
+
+	/**
 	 * API constructor.
 	 *
-	 * @param Settings_Interface $settings The plugin's settings.
+	 * @param Settings_Interface    $settings The plugin's settings.
+	 * @param Gateway_Duplicability $gateway_duplicability Checks can a gateway be duplicated.
 	 */
-	public function __construct( Settings_Interface $settings ) {
-		$this->settings = $settings;
+	public function __construct( Settings_Interface $settings, Gateway_Duplicability $gateway_duplicability ) {
+		$this->settings              = $settings;
+		$this->gateway_duplicability = $gateway_duplicability;
 	}
 
 	/**
@@ -43,8 +51,10 @@ class API implements API_Interface {
 	 *
 	 * @see Payment_Gateways::add_gateways()
 	 *
-	 * NB: Does not check if the gateway id is set in the parent class constructor (which would usually make a
-	 * gateway ineligible for duplication). This step is done in the UI, so useful but not foolproof.
+	 * Refuses gateways whose constructors require arguments or overwrite the id, since the duplicate would
+	 * replace the original.
+	 *
+	 * @see Gateway_Duplicability::is_safe_to_duplicate()
 	 *
 	 * @used-by AJAX::add_new_duplicate_payment_gateway()
 	 *
@@ -82,6 +92,13 @@ class API implements API_Interface {
 			);
 
 			return $result;
+		}
+
+		if ( ! $this->gateway_duplicability->is_safe_to_duplicate( $gateways[ $gateway_id ] ) ) {
+			return array(
+				'success' => false,
+				'message' => 'The gateway cannot be duplicated: its constructor requires arguments or sets its id.',
+			);
 		}
 
 		/**
@@ -129,6 +146,18 @@ class API implements API_Interface {
 		$gateways = \WC_Payment_Gateways::instance()->payment_gateways();
 
 		if ( ! isset( $gateways[ $gateway_id ] ) ) {
+
+			// The duplicate may not be loaded because the gateway it copies is no longer active.
+			if ( isset( $this->settings->get_configs()[ $gateway_id ] ) ) {
+				delete_option( "woocommerce_{$gateway_id}_settings" );
+				$this->settings->delete_duplicate( $gateway_id );
+
+				return array(
+					'success' => true,
+					'message' => $gateway_id . ' deleted',
+				);
+			}
+
 			return array(
 				'success' => false,
 				'message' => 'No gateway found with id: ' . $gateway_id,
