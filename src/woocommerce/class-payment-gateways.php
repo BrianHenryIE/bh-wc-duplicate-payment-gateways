@@ -76,10 +76,13 @@ class Payment_Gateways {
 			if ( ! class_exists( $gateway_to_copy ) || ! is_a( $gateway_to_copy, WC_Payment_Gateway::class, true ) ) {
 				continue;
 			}
-			if ( class_exists( __NAMESPACE__ . '\Gateway_' . $index ) ) {
+			$alias = __NAMESPACE__ . '\Gateway_' . $index;
+			if ( ! class_exists( $alias, false ) ) {
+				class_alias( $gateway_to_copy, $alias );
+			} elseif ( strtolower( ( new \ReflectionClass( $alias ) )->getName() ) !== strtolower( ltrim( $gateway_to_copy, '\\' ) ) ) {
+				// This alias was already used for a different gateway earlier in this request, and cannot be changed.
 				continue;
 			}
-			class_alias( $gateway_to_copy, __NAMESPACE__ . '\Gateway_' . $index );
 
 			switch ( $index ) {
 				case 0:
