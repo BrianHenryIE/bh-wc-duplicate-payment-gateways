@@ -16,6 +16,6 @@
 * Methods that are hooked to WordPress actions and filters should have PhpDoc `@hooked` annotation with the name and `@see` annotation linking to the call site
 * API methods should return simple objects and not arrays unless the array is a simple list of items
 * Prefer PSR LoggerInterface for logging, almost never use `error_log`.
-* Protect against fatal errors by catching exceptions at the interfaces with WordPress
+* Protect against fatal errors by catching exceptions at the interfaces with WordPress, always log them.
 * Do not commit auto-generated files (e.g. .pot, JS)
 * 
