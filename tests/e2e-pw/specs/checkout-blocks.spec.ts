@@ -32,7 +32,10 @@ test.describe( 'Block checkout', () => {
 		await deleteDuplicate( requestUtils, duplicateId );
 	} );
 
-	test( 'an order can be placed with a duplicate gateway', async ( { page, requestUtils } ) => {
+	test( 'an order can be placed with a duplicate gateway', async ( {
+		page,
+		requestUtils,
+	} ) => {
 		await updateDuplicateSettings( requestUtils, duplicateId, {
 			enabled: 'yes',
 			title: `Pay by phone ${ duplicateId }`,
@@ -45,7 +48,10 @@ test.describe( 'Block checkout', () => {
 		await page.getByLabel( 'Email address' ).fill( 'guest@example.com' );
 		await page.getByLabel( 'First name' ).first().fill( 'John' );
 		await page.getByLabel( 'Last name' ).first().fill( 'Doe' );
-		await page.getByLabel( 'Address', { exact: true } ).first().fill( '1 Main St' );
+		await page
+			.getByLabel( 'Address', { exact: true } )
+			.first()
+			.fill( '1 Main St' );
 		await page.getByLabel( 'City' ).first().fill( 'San Francisco' );
 		await page.getByLabel( 'ZIP Code' ).first().fill( '94107' );
 
@@ -57,9 +63,10 @@ test.describe( 'Block checkout', () => {
 		await page.waitForURL( /order-received\/(\d+)/ );
 		const orderId = page.url().match( /order-received\/(\d+)/ )?.[ 1 ];
 
-		const order: { payment_method: string; status: string } = await requestUtils.rest( {
-			path: `/wc/v3/orders/${ orderId }`,
-		} );
+		const order: { payment_method: string; status: string } =
+			await requestUtils.rest( {
+				path: `/wc/v3/orders/${ orderId }`,
+			} );
 		expect( order.payment_method ).toBe( duplicateId );
 		// The original gateway's `process_payment()` ran.
 		expect( order.status ).toBe( 'on-hold' );
@@ -79,7 +86,13 @@ test.describe( 'Block checkout', () => {
 		await page.goto( '/checkout-blocks/' );
 
 		// The original is listed, so the payment methods have loaded.
-		await expect( page.locator( 'input[name="radio-control-wc-payment-method-options"][value="demo_gateway"]' ) ).toBeAttached();
-		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount( 0 );
+		await expect(
+			page.locator(
+				'input[name="radio-control-wc-payment-method-options"][value="demo_gateway"]'
+			)
+		).toBeAttached();
+		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount(
+			0
+		);
 	} );
 } );

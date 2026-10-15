@@ -33,32 +33,50 @@ test.describe( 'Duplicate gateway settings', () => {
 		page,
 		requestUtils,
 	} ) => {
-		await admin.visitAdminPage( `admin.php?page=wc-settings&tab=checkout&section=${ duplicateId }` );
+		await admin.visitAdminPage(
+			`admin.php?page=wc-settings&tab=checkout&section=${ duplicateId }`
+		);
 
-		await page.locator( `#woocommerce_${ duplicateId }_${ ADMIN_TITLE }` ).fill( 'Demo Gateway – Phone orders' );
+		await page
+			.locator( `#woocommerce_${ duplicateId }_${ ADMIN_TITLE }` )
+			.fill( 'Demo Gateway – Phone orders' );
 		await page.getByRole( 'button', { name: 'Save changes' } ).click();
-		await expect( page.getByText( 'Your settings have been saved.' ) ).toBeVisible();
+		await expect(
+			page.getByText( 'Your settings have been saved.' )
+		).toBeVisible();
 
 		const gateway = await getPaymentGateway( requestUtils, duplicateId );
 		expect( gateway.method_title ).toBe( 'Demo Gateway – Phone orders' );
 	} );
 
-	test( 'until an admin title is set, the duplicate\'s id distinguishes it in WooCommerce / Settings / Payments', async ( {
+	test( "until an admin title is set, the duplicate's id distinguishes it in WooCommerce / Settings / Payments", async ( {
 		admin,
 		page,
 	} ) => {
 		await admin.visitAdminPage( 'admin.php?page=wc-settings&tab=checkout' );
 
-		await expect( page.getByText( `Demo Gateway (${ duplicateId })` ).first() ).toBeVisible();
+		await expect(
+			page.getByText( `Demo Gateway (${ duplicateId })` ).first()
+		).toBeVisible();
 	} );
 
-	test( 'the original gateway does not have the extra settings', async ( { admin, page } ) => {
-		await admin.visitAdminPage( 'admin.php?page=wc-settings&tab=checkout&section=demo_gateway' );
+	test( 'the original gateway does not have the extra settings', async ( {
+		admin,
+		page,
+	} ) => {
+		await admin.visitAdminPage(
+			'admin.php?page=wc-settings&tab=checkout&section=demo_gateway'
+		);
 
-		await expect( page.locator( `#woocommerce_demo_gateway_${ HIDE_ON_CHECKOUT }` ) ).toHaveCount( 0 );
+		await expect(
+			page.locator( `#woocommerce_demo_gateway_${ HIDE_ON_CHECKOUT }` )
+		).toHaveCount( 0 );
 	} );
 
-	test( 'a duplicate is available at the (shortcode) checkout', async ( { page, requestUtils } ) => {
+	test( 'a duplicate is available at the (shortcode) checkout', async ( {
+		page,
+		requestUtils,
+	} ) => {
 		await updateDuplicateSettings( requestUtils, duplicateId, {
 			enabled: 'yes',
 			title: `Visible ${ duplicateId }`,
@@ -67,7 +85,9 @@ test.describe( 'Duplicate gateway settings', () => {
 		await addTestProductToCart( page, requestUtils );
 		await page.goto( '/checkout-shortcode/' );
 
-		await expect( page.getByText( `Visible ${ duplicateId }` ) ).toBeVisible();
+		await expect(
+			page.getByText( `Visible ${ duplicateId }` )
+		).toBeVisible();
 	} );
 
 	test( '"hide on checkout" removes the duplicate from the (shortcode) checkout', async ( {
@@ -84,7 +104,11 @@ test.describe( 'Duplicate gateway settings', () => {
 		await page.goto( '/checkout-shortcode/' );
 
 		// The original is still there.
-		await expect( page.locator( '#payment_method_demo_gateway' ) ).toBeAttached();
-		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount( 0 );
+		await expect(
+			page.locator( '#payment_method_demo_gateway' )
+		).toBeAttached();
+		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount(
+			0
+		);
 	} );
 } );

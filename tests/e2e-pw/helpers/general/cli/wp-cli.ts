@@ -8,11 +8,17 @@
 import { execFileSync } from 'child_process';
 
 export function wpCli( args: string[] ): string {
-	const config = process.env.WP_ENV_CONFIG ? [ '--config', process.env.WP_ENV_CONFIG ] : [];
-	return execFileSync( 'npx', [ 'wp-env', 'run', ...config, 'cli', 'wp', ...args ], {
-		encoding: 'utf8',
-		stdio: [ 'ignore', 'pipe', 'pipe' ],
-	} );
+	const config = process.env.WP_ENV_CONFIG
+		? [ '--config', process.env.WP_ENV_CONFIG ]
+		: [];
+	return execFileSync(
+		'npx',
+		[ 'wp-env', 'run', ...config, 'cli', 'wp', ...args ],
+		{
+			encoding: 'utf8',
+			stdio: [ 'ignore', 'pipe', 'pipe' ],
+		}
+	);
 }
 
 /**
@@ -20,12 +26,15 @@ export function wpCli( args: string[] ): string {
  *
  * WP-Cron may already have spawned and run the event on an earlier page load, in which case there is nothing
  * to run and WP-CLI exits non-zero; that is not a failure for callers who then assert the event's effect.
+ * @param hook
  */
 export function runDueCronHook( hook: string ): string {
 	try {
 		return wpCli( [ 'cron', 'event', 'run', hook ] );
 	} catch ( error ) {
-		const output = String( ( error as { stderr?: string } ).stderr ?? '' ) + String( ( error as { stdout?: string } ).stdout ?? '' );
+		const output =
+			String( ( error as { stderr?: string } ).stderr ?? '' ) +
+			String( ( error as { stdout?: string } ).stdout ?? '' );
 		if ( ! /Invalid cron event|no.*events/i.test( output ) ) {
 			throw error;
 		}

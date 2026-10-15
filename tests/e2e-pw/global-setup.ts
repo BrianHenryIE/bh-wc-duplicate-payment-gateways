@@ -12,7 +12,9 @@ async function globalSetup( config: FullConfig ) {
 	let lastError: unknown;
 	for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
 		const requestContext = await request.newContext( { baseURL } );
-		const requestUtils = new RequestUtils( requestContext, { storageStatePath } );
+		const requestUtils = new RequestUtils( requestContext, {
+			storageStatePath,
+		} );
 		try {
 			await requestUtils.setupRest();
 			await requestContext.dispose();
@@ -22,7 +24,9 @@ async function globalSetup( config: FullConfig ) {
 			lastError = error;
 			if ( attempt < MAX_ATTEMPTS ) {
 				// eslint-disable-next-line no-console
-				console.log( `Global setup attempt ${ attempt } failed, retrying…` );
+				console.log(
+					`Global setup attempt ${ attempt } failed, retrying…`
+				);
 			}
 		}
 	}

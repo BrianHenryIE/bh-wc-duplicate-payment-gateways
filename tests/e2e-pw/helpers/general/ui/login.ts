@@ -11,7 +11,10 @@ export async function loginAsAdmin( page: Page ): Promise< void > {
 	await login( { username: 'admin', password: 'password' }, page );
 }
 
-export async function login( user: { username: string; password: string }, page: Page ): Promise< void > {
+export async function login(
+	user: { username: string; password: string },
+	page: Page
+): Promise< void > {
 	if ( await isLoggedIn( page ) ) {
 		return;
 	}
@@ -23,8 +26,14 @@ export async function login( user: { username: string; password: string }, page:
 	// never settles on pages with persistent requests (WooCommerce my-account, wc-admin), 'load' can take
 	// longer than the test timeout on the WooCommerce admin, and 'domcontentloaded' resolves immediately for
 	// the already-loaded login page.
-	await page.locator( '#loginform' ).getByRole( 'button', { name: 'Log In' } ).click();
-	await page.waitForURL( ( url ) => ! url.pathname.endsWith( '/wp-login.php' ), { waitUntil: 'commit' } );
+	await page
+		.locator( '#loginform' )
+		.getByRole( 'button', { name: 'Log In' } )
+		.click();
+	await page.waitForURL(
+		( url ) => ! url.pathname.endsWith( '/wp-login.php' ),
+		{ waitUntil: 'commit' }
+	);
 
 	expect( await isLoggedIn( page ) ).toBe( true );
 }
@@ -73,12 +82,12 @@ export async function isLoggedIn( page: Page ): Promise< boolean > {
 			if ( adminResponse.status() === 200 ) {
 				return true;
 			}
-		} catch ( error ) {
+		} catch {
 			// fall through
 		}
 
 		return hasLoginCookie;
-	} catch ( error ) {
+	} catch {
 		return false;
 	}
 }

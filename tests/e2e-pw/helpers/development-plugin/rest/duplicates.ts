@@ -19,7 +19,9 @@ export async function createDuplicate(
 	} );
 }
 
-export async function deleteAllDuplicates( requestUtils: RequestUtils ): Promise< void > {
+export async function deleteAllDuplicates(
+	requestUtils: RequestUtils
+): Promise< void > {
 	await requestUtils.rest( { method: 'DELETE', path: PATH } );
 }
 
@@ -31,8 +33,14 @@ export async function getDuplicateConfigs(
 	return Array.isArray( configs ) ? {} : configs;
 }
 
-export async function deleteDuplicate( requestUtils: RequestUtils, duplicateId: string ): Promise< void > {
-	await requestUtils.rest( { method: 'DELETE', path: `${ PATH }/${ duplicateId }` } );
+export async function deleteDuplicate(
+	requestUtils: RequestUtils,
+	duplicateId: string
+): Promise< void > {
+	await requestUtils.rest( {
+		method: 'DELETE',
+		path: `${ PATH }/${ duplicateId }`,
+	} );
 }
 
 /**
