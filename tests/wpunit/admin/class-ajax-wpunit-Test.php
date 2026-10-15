@@ -22,6 +22,12 @@ class AJAX_WPUnit_Test extends WPAjaxTestCase {
 
 		// WooCommerce's `admin_init` hooks, run by `_handleAjax()`, need its admin functions.
 		require_once WC_ABSPATH . 'includes/admin/wc-admin-functions.php';
+
+		// Otherwise, in a freshly installed test database, `admin_init` runs WooCommerce's first-install routine,
+		// whose HPOS query joins the (temporary, during tests) orders table to itself. MySQL cannot reopen a
+		// temporary table, and the database error printed into the response breaks the JSON. See
+		// `WC_Install::newly_installed()`.
+		update_option( \WC_Install::NEWLY_INSTALLED_OPTION, 'no' );
 	}
 
 	/**
