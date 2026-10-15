@@ -6,6 +6,9 @@
  * `GET    /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates`
  * `DELETE /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates`        Delete all.
  * `DELETE /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates/{id}`   Delete one.
+ * `POST   /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates/{id}/settings` {settings: {...}}
+ *        Merge into the duplicate's `woocommerce_{id}_settings` option. WooCommerce's REST API only accepts the
+ *        gateway's own fields, not the admin title/description/hide-on-checkout fields this plugin adds.
  *
  * Assertions should use WooCommerce's own `/wc/v3/payment_gateways`, which lists duplicates alongside the originals.
  *
@@ -83,6 +86,41 @@ class Duplicates {
 				'permission_callback' => array( $this, 'permission_callback' ),
 			)
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			'/duplicates/(?P<id>[\w-]+)/settings',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'update_settings' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'settings' => array(
+						'type'     => 'object',
+						'required' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Merge settings into a duplicate's WooCommerce settings option.
+	 *
+	 * @param WP_REST_Request $request The request.
+	 */
+	public function update_settings( WP_REST_Request $request ): WP_REST_Response {
+		$id = (string) $request->get_param( 'id' );
+
+		if ( ! isset( ( new Settings() )->get_configs()[ $id ] ) ) {
+			return new WP_REST_Response( array( 'message' => 'Not a duplicate: ' . $id ), 404 );
+		}
+
+		$option_name = "woocommerce_{$id}_settings";
+		$settings    = array_merge( (array) get_option( $option_name, array() ), (array) $request->get_param( 'settings' ) );
+		update_option( $option_name, $settings );
+
+		return new WP_REST_Response( $settings );
 	}
 
 	/**

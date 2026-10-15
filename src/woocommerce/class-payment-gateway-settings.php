@@ -9,6 +9,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
 use WC_Payment_Gateway;
+use WC_Payment_Gateways;
 
 /**
  * Filters settings of other gateways.
@@ -20,21 +21,39 @@ class Payment_Gateway_Settings {
 	const HIDE_ON_CHECKOUT   = 'bh_wc_duplicate_payment_gateways_hide_on_checkout';
 
 	/**
-	 * Filters each payment gateway's settings output to print out the gateway id on the WC Settings API page.
+	 * Gateway ids whose filters have already been added, since WooCommerce may initialize the gateways more than once.
 	 *
+	 * @var array<string, true>
+	 */
+	protected array $registered_gateway_ids = array();
+
+	/**
+	 * Filter each duplicate gateway's settings fields to add the admin title, admin description and hide on checkout
+	 * fields.
+	 *
+	 * Uses the `WC_Payment_Gateways` instance passed to the action, rather than `WC_Payment_Gateways::instance()`,
+	 * since the action runs inside `WC_Payment_Gateways::__construct()`, before the singleton is assigned.
+	 *
+	 * @hooked wc_payment_gateways_initialized
+	 * @see WC_Payment_Gateways::init()
 	 * @see WC_Settings_API::get_form_fields()
 	 *
-	 * @hooked woocommerce_after_register_post_type
+	 * @param WC_Payment_Gateways $wc_payment_gateways The gateways that have just been loaded.
 	 */
-	public function register_filter_on_each_gateway(): void {
+	public function register_filter_on_each_gateway( WC_Payment_Gateways $wc_payment_gateways ): void {
 
-		$gateways = \WC_Payment_Gateways::instance()->payment_gateways();
+		foreach ( $wc_payment_gateways->payment_gateways as $gateway ) {
 
-		foreach ( $gateways as $gateway_id => $gateway ) {
-
-			if ( ! is_a( $gateway, Gateway_Copy_Interface::class, true ) || ! ( $gateway instanceof WC_Payment_Gateway ) ) {
+			if ( ! ( $gateway instanceof Gateway_Copy_Interface ) ) {
 				continue;
 			}
+
+			$gateway_id = $gateway->id;
+
+			if ( isset( $this->registered_gateway_ids[ $gateway_id ] ) ) {
+				continue;
+			}
+			$this->registered_gateway_ids[ $gateway_id ] = true;
 
 			add_filter(
 				"woocommerce_settings_api_form_fields_{$gateway_id}",
@@ -46,12 +65,14 @@ class Payment_Gateway_Settings {
 			);
 
 			add_action( "woocommerce_update_options_payment_gateways_{$gateway_id}", array( $this, 'save_settings' ) );
-
 		}
 	}
 
 	/**
 	 * The form field to add to each settings page.
+	 *
+	 * The placeholders use the `method_title` and `method_description` properties, since `get_method_title()` is
+	 * filtered by `Payment_Gateway::replace_title()`, which reads the settings, which calls this: infinite recursion.
 	 *
 	 * @param array<string|int, mixed> $form_fields The gateway's existing settings.
 	 * @param WC_Payment_Gateway       $gateway The gateway instance.
@@ -75,7 +96,7 @@ class Payment_Gateway_Settings {
 			'description' => __( '[Duplicate gateway] Change the title displayed to shop managers in the WooCommerce admin area.', 'bh-wc-duplicate-payment-gateways' ),
 			'default'     => '',
 			'id'          => self::ADMIN_METHOD_TITLE,
-			'placeholder' => $gateway->get_method_title(),
+			'placeholder' => wp_strip_all_tags( $gateway->method_title ),
 		);
 
 		$form_fields[ self::ADMIN_DESCRIPTION ] = array(
@@ -84,12 +105,12 @@ class Payment_Gateway_Settings {
 			'description' => __( '[Duplicate gateway] Change the description displayed to shop managers in the WooCommerce admin area.', 'bh-wc-duplicate-payment-gateways' ),
 			'default'     => '',
 			'id'          => self::ADMIN_DESCRIPTION,
-			'placeholder' => $gateway->get_method_description(),
+			'placeholder' => wp_strip_all_tags( $gateway->method_description ),
 		);
 
 		$form_fields[ self::HIDE_ON_CHECKOUT ] = array(
-			'title'       => __( 'Hide on checkout', 'bh-wc-offline-credit-card-gateway' ),
-			'label'       => __( 'Hide on checkout', 'bh-wc-offline-credit-card-gateway' ),
+			'title'       => __( 'Hide on checkout', 'bh-wc-duplicate-payment-gateways' ),
+			'label'       => __( 'Hide on checkout', 'bh-wc-duplicate-payment-gateways' ),
 			'type'        => 'checkbox',
 			'description' => __( '[Duplicate gateway] If this gateway is just used for reporting, you may never want it available at the checkout.', 'bh-wc-duplicate-payment-gateways' ),
 			'default'     => 'no',

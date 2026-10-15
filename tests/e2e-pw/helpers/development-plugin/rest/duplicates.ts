@@ -43,3 +43,22 @@ export async function deleteDuplicate( requestUtils: RequestUtils, duplicateId: 
 export function uniqueDuplicateId( prefix: string ): string {
 	return `${ prefix }_${ Date.now().toString( 36 ) }${ Math.floor( Math.random() * 1000 ) }`;
 }
+
+/**
+ * Set a duplicate's settings, including the fields this plugin adds, which WooCommerce's REST API does not accept.
+ *
+ * @param requestUtils
+ * @param duplicateId
+ * @param settings     E.g. `{ enabled: 'yes', title: 'My title', bh_wc_duplicate_payment_gateways_hide_on_checkout: 'yes' }`.
+ */
+export async function updateDuplicateSettings(
+	requestUtils: RequestUtils,
+	duplicateId: string,
+	settings: Record< string, string >
+): Promise< void > {
+	await requestUtils.rest( {
+		method: 'POST',
+		path: `${ PATH }/${ duplicateId }/settings`,
+		data: { settings },
+	} );
+}

@@ -134,7 +134,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 		$payment_gateway_settings = new Payment_Gateway_Settings();
 
-		// add_filter( 'woocommerce_after_register_post_type', array( $payment_gateway_settings, 'register_filter_on_each_gateway' ) );
+		add_action( 'wc_payment_gateways_initialized', array( $payment_gateway_settings, 'register_filter_on_each_gateway' ) );
 	}
 
 	protected function define_payment_gateway_hooks(): void {
