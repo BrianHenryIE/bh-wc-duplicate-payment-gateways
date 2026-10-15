@@ -20,6 +20,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Blocks_Checkout;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Features;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway_Settings;
@@ -79,6 +80,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$this->define_ajax_hooks();
 		$this->define_duplicate_gateways_page_hooks();
 		$this->define_blocks_checkout_hooks();
+		$this->define_features_hooks();
 	}
 
 	/**
@@ -195,5 +197,15 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$blocks_checkout = new Blocks_Checkout( $this->settings );
 
 		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $blocks_checkout, 'register_duplicates' ) );
+	}
+
+	/**
+	 * Declare compatibility with WooCommerce features.
+	 */
+	protected function define_features_hooks(): void {
+
+		$features = new Features( $this->settings );
+
+		add_action( 'before_woocommerce_init', array( $features, 'declare_compatibility' ) );
 	}
 }
