@@ -84,3 +84,24 @@ wp option set woocommerce_onboarding_profile '{"skipped":true}' --format=json
 wp option set woocommerce_task_list_hidden yes
 wp option set woocommerce_show_marketplace_suggestions no
 wp option set woocommerce_allow_tracking no
+
+# Demo: one duplicate of the development plugin's demo gateway, with its own titles.
+# @see development-plugin/gateways/class-demo-gateway.php
+echo "Creating demo duplicate gateway..."
+wp eval '
+  $api = $GLOBALS["bh_wc_duplicate_payment_gateways"] ?? null;
+  if ( $api && ! isset( get_option( "bh_wc_duplicate_payment_gateways", array() )["demo_gateway_phone"] ) ) {
+    $result = $api->add_new_duplicate_payment_gateway( "demo_gateway", "demo_gateway_phone" );
+    echo $result["message"], PHP_EOL;
+    update_option(
+      "woocommerce_demo_gateway_phone_settings",
+      array(
+        "enabled"     => "yes",
+        "title"       => "Pay by phone",
+        "description" => "We will call you to take payment.",
+        "bh_wc_duplicate_payment_gateways_admin_title"       => "Demo Gateway – Phone orders",
+        "bh_wc_duplicate_payment_gateways_admin_description" => "Orders taken over the phone, reported separately.",
+      )
+    );
+  }
+'
