@@ -1,0 +1,185 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-15T00:27:43+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 3.0.0-alpha\n"
+"X-Domain: bh-wc-duplicate-payment-gateways\n"
+
+#: admin/class-ajax.php:65
+msgid "The new id may only contain letters, numbers, underscores and hyphens."
+msgstr ""
+
+#: admin/class-ajax.php:90
+msgid "No gateway id."
+msgstr ""
+
+#: admin/class-ajax.php:107
+msgid "Nonce verification failed. Please reload the page."
+msgstr ""
+
+#: admin/class-ajax.php:117
+msgid "You are not allowed to manage payment gateways."
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:78
+#: admin/class-duplicate-gateways-page.php:131
+msgid "Duplicate Payment Gateways"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:79
+#: admin/class-plugins-page.php:48
+msgid "Duplicate Gateways"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:133
+msgid "Create additional instances of a payment method, each with its own settings, title and description, e.g. to track orders from different sources separately."
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:134
+msgid "Payment methods whose code sets their own id, or needs constructor arguments (including WooCommerce's bank transfer, check and cash on delivery methods), cannot be duplicated."
+msgstr ""
+
+#. translators: %s: The new payment gateway id.
+#: admin/class-duplicate-gateways-page.php:140
+#, php-format
+msgid "Created payment method \"%s\"."
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:142
+msgid "Configure it"
+msgstr ""
+
+#. translators: %s: The deleted payment gateway id.
+#: admin/class-duplicate-gateways-page.php:150
+#, php-format
+msgid "Deleted payment method \"%s\"."
+msgstr ""
+
+#. translators: %s: The plugin slug.
+#: admin/class-duplicate-gateways-page.php:160
+#, php-format
+msgid "Showing payment methods from the \"%s\" plugin."
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:162
+msgid "Show all"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:168
+msgid "Payment method"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:169
+msgid "ID"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:170
+msgid "Enabled"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:171
+msgid "Duplicate of"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:172
+msgid "Actions"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:206
+msgid "Yes"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:207
+msgid "No"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:222
+msgid "Manage"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:229
+msgid "Delete"
+msgstr ""
+
+#. translators: %s: The payment gateway id.
+#: admin/class-duplicate-gateways-page.php:240
+#, php-format
+msgid "New id for the duplicate of %s"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:242
+msgid "Duplicate"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:247
+msgid "Cannot be duplicated"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:303
+msgid "Need more than one instance of a payment method?"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:304
+#: admin/class-duplicate-gateways-page.php:310
+msgid "Duplicate payment gateways"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:306
+msgid "This payment method is a duplicate."
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:307
+msgid "Manage duplicate payment gateways"
+msgstr ""
+
+#: admin/class-duplicate-gateways-page.php:309
+msgid "This payment method can be duplicated."
+msgstr ""
+
+#: admin/class-plugins-page.php:136
+msgid "Gateways"
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:86
+msgid "Admin title"
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:88
+msgid "[Duplicate gateway] Change the title displayed to shop managers in the WooCommerce admin area."
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:95
+msgid "Admin description"
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:97
+msgid "[Duplicate gateway] Change the description displayed to shop managers in the WooCommerce admin area."
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:104
+#: woocommerce/class-payment-gateway-settings.php:105
+msgid "Hide on checkout"
+msgstr ""
+
+#: woocommerce/class-payment-gateway-settings.php:107
+msgid "[Duplicate gateway] If this gateway is just used for reporting, you may never want it available at the checkout."
+msgstr ""
+
+#. translators: %s: The payment gateway ID.
+#: woocommerce/class-payment-gateways-list-ui.php:93
+#, php-format
+msgid "Delete the duplicate \"%s\" payment method."
+msgstr ""
+
+#. translators: %s: The payment gateway ID.
+#: woocommerce/class-payment-gateways-list-ui.php:97
+#, php-format
+msgid "Duplicate the \"%s\" payment method."
+msgstr ""
