@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
@@ -80,16 +82,6 @@ class Payment_Gateway_Settings {
 	 */
 	protected function add_extra_gateway_settings_page( array $form_fields, WC_Payment_Gateway $gateway ): array {
 
-		// $parent_classes = class_parents( $gateway );
-		// @phpstan-ignore-next-line WC_Payment_Gateway itself is a subclass, so the next line will never return false.
-		// $first_parent_class = array_key_first( $parent_classes );
-		// **
-		// * Instance of the gateway that has been duplicated.
-		// *
-		// * @var WC_Payment_Gateway $parent_instance
-		// */
-		// $parent_instance = new $first_parent_class();
-
 		$form_fields[ self::ADMIN_METHOD_TITLE ] = array(
 			'title'       => __( 'Admin title', 'bh-wc-duplicate-payment-gateways' ),
 			'type'        => 'text',
@@ -129,7 +121,7 @@ class Payment_Gateway_Settings {
 	 */
 	public function save_settings(): void {
 
-		$filter_name = current_filter();
+		$filter_name = (string) current_filter();
 		$gateway_id  = substr( $filter_name, strlen( 'woocommerce_update_options_payment_gateways_' ) );
 
 		$gateways = \WC_Payment_Gateways::instance()->payment_gateways();

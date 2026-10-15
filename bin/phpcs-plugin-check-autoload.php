@@ -11,6 +11,8 @@
  * @package brianhenryie/bh-wp-bitcoin-gateway
  */
 
+declare(strict_types=1);
+
 \PHP_CodeSniffer\Autoload::addSearchPath(
 	dirname( __DIR__ ) . '/wp-content/plugins/plugin-check/vendor/plugin-check/phpcs-sniffs/PluginCheck',
 	'PluginCheckCS\\PluginCheck'

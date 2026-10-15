@@ -7,6 +7,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
@@ -46,12 +48,13 @@ class Payment_Gateway {
 	}
 
 	/**
+	 * If a new admin description has been specified for the gateway, replace the parent description.
+	 *
 	 * @hooked woocommerce_gateway_method_description
 	 * @see WC_Payment_Gateway::get_method_description()
 	 *
-	 * @param string             $method_description
-	 * @param WC_Payment_Gateway $gateway
-	 * @return string
+	 * @param string             $method_description The original payment method description.
+	 * @param WC_Payment_Gateway $gateway            The payment gateway instance.
 	 */
 	public function replace_description( string $method_description, WC_Payment_Gateway $gateway ): string {
 

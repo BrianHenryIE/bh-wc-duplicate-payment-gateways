@@ -11,6 +11,8 @@
  * @see https://github.com/alleyinteractive/wordpress-autoloader
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Alley_Interactive\Autoloader\Autoloader;

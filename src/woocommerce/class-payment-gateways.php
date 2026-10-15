@@ -8,6 +8,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
@@ -15,7 +17,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use WC_Payment_Gateway;
 
 /**
- *
+ * Add the duplicates to WooCommerce's gateways; hide those set to "hide on checkout".
  */
 class Payment_Gateways {
 
@@ -495,7 +497,7 @@ class Payment_Gateways {
 		$updated_available_gateways = array();
 
 		foreach ( $available_gateways as $key => $gateway ) {
-			if ( $gateway instanceof Gateway_Copy_Interface && $gateway instanceof WC_Payment_Gateway ) {
+			if ( $gateway instanceof Gateway_Copy_Interface ) {
 				$should_hide_gateway = $gateway->get_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'no' );
 				if ( ! wc_string_to_bool( $should_hide_gateway ) ) {
 					$updated_available_gateways[ $key ] = $gateway;

@@ -10,6 +10,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;

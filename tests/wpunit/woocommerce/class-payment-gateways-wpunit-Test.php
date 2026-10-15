@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;

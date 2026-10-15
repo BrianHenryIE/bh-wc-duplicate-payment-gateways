@@ -5,6 +5,9 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
+
 WP_Mock::setUsePatchwork( true );
 WP_Mock::bootstrap();
 

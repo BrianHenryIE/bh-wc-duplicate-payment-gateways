@@ -12,6 +12,8 @@
  * @package brianhenryie/bh-wp-cli-logger
  */
 
+declare(strict_types=1);
+
 $vendor_dir     = __DIR__ . '/../vendor';
 $autoload_files = array(
 	$vendor_dir . '/composer/autoload_files.php',

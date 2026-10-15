@@ -8,6 +8,8 @@
  * @author Brian Henry <BrianHenryIE@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;

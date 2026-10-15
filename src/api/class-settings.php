@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;

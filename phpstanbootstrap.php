@@ -7,6 +7,9 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
+
 defined( 'WP_CONTENT_DIR' ) || define( 'WP_CONTENT_DIR', __DIR__ . '/wp-content' );
 defined( 'WP_PLUGIN_DIR' ) || define( 'WP_PLUGIN_DIR', __DIR__ . '/wp-content/plugins' );
 

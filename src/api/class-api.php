@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
@@ -30,6 +32,8 @@ class API implements API_Interface {
 
 	/**
 	 * Used to refuse to duplicate gateways which would overwrite the duplicate's id.
+	 *
+	 * @var Gateway_Duplicability
 	 */
 	protected Gateway_Duplicability $gateway_duplicability;
 
@@ -173,7 +177,7 @@ class API implements API_Interface {
 
 		$gateway = $gateways[ $gateway_id ];
 
-		if ( ! ( $gateway instanceof Gateway_Copy_Interface ) || ! ( $gateway instanceof WC_Payment_Gateway ) ) {
+		if ( ! ( $gateway instanceof Gateway_Copy_Interface ) ) {
 			return array(
 				'success' => false,
 				'message' => 'Not a duplicate payment gateway. Cannot delete',

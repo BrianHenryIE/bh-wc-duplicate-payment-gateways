@@ -27,6 +27,8 @@
  * WC tested up to:   11.2
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API;
@@ -60,8 +62,6 @@ function instantiate_bh_wc_duplicate_payment_gateways(): API_Interface {
 	$api                   = new API( $settings, $gateway_duplicability );
 
 	new BH_WC_Duplicate_Payment_Gateways( $api, $settings, $gateway_duplicability );
-
-	// \BH_WC_Duplicate_Payment_Gateways_SLSWC_Client::get_instance( 'https://bhwp.ie/', __FILE__ );
 
 	return $api;
 }

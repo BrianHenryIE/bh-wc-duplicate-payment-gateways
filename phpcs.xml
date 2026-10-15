@@ -39,6 +39,11 @@
     <autoload>./bin/phpcs-plugin-check-autoload.php</autoload>
     <rule ref="./wp-content/plugins/plugin-check/vendor/plugin-check/phpcs-sniffs/PluginCheck"/>
 
+    <!-- Not distributed on WordPress.org, so translations are not loaded automatically. -->
+    <rule ref="PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound">
+        <exclude-pattern>src/wp-includes/class-i18n.php</exclude-pattern>
+    </rule>
+
     <!-- Allow unused parameters. I find it helpful to know what is available. -->
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed">
         <exclude-pattern>*</exclude-pattern>

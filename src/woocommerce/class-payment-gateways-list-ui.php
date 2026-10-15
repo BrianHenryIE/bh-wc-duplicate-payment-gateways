@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
@@ -18,10 +20,17 @@ use WC_Payment_Gateway;
  */
 class Payment_Gateways_List_UI {
 
+	/**
+	 * The plugin's main functions.
+	 *
+	 * @var API_Interface
+	 */
 	protected API_Interface $api;
 
 	/**
 	 * Used to check is a gateway safe to duplicate before printing the duplicate button.
+	 *
+	 * @var Gateway_Duplicability
 	 */
 	protected Gateway_Duplicability $gateway_duplicability;
 
@@ -81,14 +90,11 @@ class Payment_Gateways_List_UI {
 		if ( $gateway instanceof Gateway_Copy_Interface ) {
 			// Print a delete button.
 			/* translators: %s: The payment gateway ID. */
-			echo '<span class="duplicate-payment-gateway duplicate-delete dashicons dashicons-trash" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Delete the duplicate "%s" payment method.', 'woocommerce' ), $method_title ) ) . '"></span>';
-		} else {
-			// Maybe print an add button.
-
-			if ( $this->is_safe_to_duplicate( $gateway ) ) {
-				/* translators: %s: The payment gateway ID. */
-				echo '<span class="duplicate-payment-gateway duplicate-add dashicons dashicons-admin-page" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Duplicate the "%s" payment method.', 'woocommerce' ), $method_title ) ) . '"></span>';
-			}
+			echo '<span class="duplicate-payment-gateway duplicate-delete dashicons dashicons-trash" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Delete the duplicate "%s" payment method.', 'bh-wc-duplicate-payment-gateways' ), $method_title ) ) . '"></span>';
+		} elseif ( $this->is_safe_to_duplicate( $gateway ) ) {
+			// Print an add button.
+			/* translators: %s: The payment gateway ID. */
+			echo '<span class="duplicate-payment-gateway duplicate-add dashicons dashicons-admin-page" data-gateway_id="' . esc_attr( $gateway->id ) . '" title="' . esc_attr( sprintf( __( 'Duplicate the "%s" payment method.', 'bh-wc-duplicate-payment-gateways' ), $method_title ) ) . '"></span>';
 		}
 
 		echo '</td>';
@@ -133,7 +139,7 @@ class Payment_Gateways_List_UI {
 
 		foreach ( $gateways as $id => $gateway ) {
 
-			if ( $gateway instanceof Gateway_Copy_Interface && $gateway instanceof WC_Payment_Gateway ) {
+			if ( $gateway instanceof Gateway_Copy_Interface ) {
 				$should_hide_gateway = $gateway->get_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'no' );
 				if ( wc_string_to_bool( $should_hide_gateway ) ) {
 					$css .= "[data-gateway_id=\"{$id}\"] .woocommerce-input-toggle { display:none; }";

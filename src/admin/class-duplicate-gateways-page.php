@@ -12,6 +12,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
