@@ -53,7 +53,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          before_add_hook: 'git pull'
+          before_add_hook: 'git pull --rebase'
           commit_message: "🤖 PHPCBF"
 
       - name: Run PHPCS to add annotations to the code
