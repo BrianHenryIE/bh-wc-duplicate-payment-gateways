@@ -1,0 +1,197 @@
+name: Playground Preview
+
+# Reusable workflow, called from e2e.yml as soon as its "Build plugin archive" job succeeds, without
+# waiting for the E2E test matrix. Takes the plugin zip and development-plugin zip that job uploaded
+# as an artifact, publishes both to the gh-pages branch, and posts (or updates) a sticky comment on
+# the pull request linking to WordPress Playground with the plugins installed and activated,
+# alongside every wpackagist plugin and theme listed in composer.json (WooCommerce, etc.).
+#
+# The caller must grant `contents: write` and `pull-requests: write`. On `pull_request` events from
+# forks the token is read-only, so the caller should not call this for them.
+#
+# @author BrianHenryIE
+
+on:
+  workflow_call:
+    inputs:
+      pr-number:
+        description: The pull request to comment on.
+        required: true
+        type: number
+      head-sha:
+        description: The pull request's head commit; the zips are published under this path on gh-pages.
+        required: true
+        type: string
+      artifact-name:
+        description: The artifact holding the plugin zip and development-plugin.zip.
+        required: false
+        type: string
+        default: plugin-archives
+
+jobs:
+
+  playground-preview:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # To commit the zips to gh-pages.
+      pull-requests: write # To add the comment.
+
+    env:
+      PLUGIN_SLUG: "bh-wc-duplicate-payment-gateways"
+      DEV_PLUGIN_SLUG: development-plugin
+      HEAD_SHA: ${{ inputs.head-sha }}
+
+    steps:
+
+      # composer.json is read to list the wpackagist plugins for the blueprint.
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.head-sha }}
+
+      - name: Checkout GitHub Pages branch
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # The calling workflow's build job uploaded the plugin zip and the development-plugin zip (the
+      # same ones its tests run against), so there is no need to install PHP, Composer or Node here
+      # and rebuild them. Same workflow run, so no run id or token is needed.
+      - name: Download the plugin archives
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: dist-archive
+
+      - name: Locate the plugin archives
+        id: archive
+        run: |
+          ls -l dist-archive
+          ARCHIVE=$(find dist-archive -maxdepth 1 -name "${PLUGIN_SLUG}.*.zip" | sort | tail -n 1)
+          DEV_ARCHIVE="dist-archive/${DEV_PLUGIN_SLUG}.zip"
+          test -f "$ARCHIVE" || { echo "Plugin archive not found in artifact."; exit 1; }
+          test -f "$DEV_ARCHIVE" || { echo "Development plugin archive not found in artifact."; exit 1; }
+          echo "path=${ARCHIVE}" >> "$GITHUB_OUTPUT"
+          echo "dev_path=${DEV_ARCHIVE}" >> "$GITHUB_OUTPUT"
+
+      # Published to gh-pages because Playground fetches the zips from the browser: GitHub Pages
+      # serves `access-control-allow-origin: *`, whereas Actions artifacts require authentication.
+      - name: Publish the zips to gh-pages
+        id: publish
+        run: |
+          DEST="gh-pages/${HEAD_SHA}/playground"
+          BASE_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${HEAD_SHA}/playground"
+          mkdir -p "$DEST"
+          cp "${{ steps.archive.outputs.path }}" "${DEST}/${PLUGIN_SLUG}.zip"
+          cp "${{ steps.archive.outputs.dev_path }}" "${DEST}/${DEV_PLUGIN_SLUG}.zip"
+          echo "url=${BASE_URL}/${PLUGIN_SLUG}.zip" >> "$GITHUB_OUTPUT"
+          echo "dev_url=${BASE_URL}/${DEV_PLUGIN_SLUG}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Pre-commit `git pull gh-pages`
+        run: |
+          cd gh-pages
+          # Re-fetch: the coverage job pushes to gh-pages too, so this ref may already be stale.
+          # The zips are untracked, so a force checkout keeps them.
+          git fetch origin gh-pages || true
+          (git ls-remote --heads --exit-code origin gh-pages &>/dev/null) && (git checkout --progress --force -B gh-pages refs/remotes/origin/gh-pages)
+
+      - name: Commit the zips to gh-pages
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          repository: gh-pages
+          branch: gh-pages
+          before_add_hook: 'git pull'
+          commit_message: "🤖 Commit Playground preview build"
+
+      - name: Build the Playground URL
+        id: playground
+        env:
+          ZIP_URL: ${{ steps.publish.outputs.url }}
+          DEV_ZIP_URL: ${{ steps.publish.outputs.dev_url }}
+        run: |
+          # Install every wpackagist plugin and theme from composer.json's `require-dev` from
+          # wordpress.org, so the Playground site matches wp-env. WooCommerce is moved to the front
+          # of the list so the extensions that depend on it activate after it.
+          WPORG_STEPS=$(jq -c '
+            (."require-dev" | keys) as $packages
+            | ( [ $packages[] | select(startswith("wpackagist-plugin/")) ]
+                | sort_by(. != "wpackagist-plugin/woocommerce")
+                | map({
+                    step: "installPlugin",
+                    pluginData: { resource: "wordpress.org/plugins", slug: sub("^wpackagist-plugin/"; "") },
+                    options: { activate: true }
+                  }) )
+            + ( [ $packages[] | select(startswith("wpackagist-theme/")) ]
+                | map({
+                    step: "installTheme",
+                    themeData: { resource: "wordpress.org/themes", slug: sub("^wpackagist-theme/"; "") },
+                    options: { activate: true }
+                  }) )
+          ' composer.json)
+
+          # The blueprint is passed in the URL fragment so it does not need hosting itself.
+          # The development plugin returns early unless the main plugin is active, so it is
+          # installed last; it adds the demo gateways. WooCommerce's sample products are imported,
+          # and the landing page is WooCommerce / Duplicate Gateways.
+          BLUEPRINT=$(jq -cn --arg url "$ZIP_URL" --arg dev_url "$DEV_ZIP_URL" --argjson wporg "$WPORG_STEPS" '{
+            "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+            "landingPage": "/wp-admin/admin.php?page=bh-wc-duplicate-payment-gateways",
+            "preferredVersions": { "php": "8.4", "wp": "latest" },
+            "steps": (
+              [ { "step": "login", "username": "admin", "password": "password" } ]
+              + $wporg
+              + [
+                {
+                  "step": "installPlugin",
+                  "pluginData": { "resource": "url", "url": $url },
+                  "options": { "activate": true }
+                },
+                {
+                  "step": "installPlugin",
+                  "pluginData": { "resource": "url", "url": $dev_url },
+                  "options": { "activate": true }
+                },
+                {
+                  "step": "setSiteOptions",
+                  "options": {
+                    "woocommerce_coming_soon": "no",
+                    "woocommerce_onboarding_profile": { "skipped": true }
+                  }
+                },
+                {
+                  "step": "importWxr",
+                  "file": {
+                    "resource": "vfs",
+                    "path": "/wordpress/wp-content/plugins/woocommerce/sample-data/sample_products.xml"
+                  }
+                }
+              ]
+            )
+          }')
+          ENCODED=$(printf '%s' "$BLUEPRINT" | jq -sRr @uri)
+          echo "url=https://playground.wordpress.net/#${ENCODED}" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on the pull request
+        uses: mshick/add-pr-comment@v3
+        continue-on-error: true # Pull requests opened by non-members have no write permissions.
+        with:
+          issue: ${{ inputs.pr-number }}
+          message-id: playground-preview
+          message: |
+            ### ▶️ [Try this branch in WordPress Playground](${{ steps.playground.outputs.url }})
+
+            A one-click sandbox with the plugin, the development plugin (demo gateways), WooCommerce and
+            the other wp-env plugins installed and activated, and WooCommerce's sample products imported.
+            It opens at WooCommerce / Duplicate Gateways, logged in as `admin`. Nothing is
+            installed on your machine and the site is discarded when you close the tab.
+
+            | | |
+            |---|---|
+            | Commit | [`${{ inputs.head-sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ inputs.head-sha }}) |
+            | Plugin zip | [`bh-wc-duplicate-payment-gateways.zip`](${{ steps.publish.outputs.url }}) |
+            | Development plugin zip | [`development-plugin.zip`](${{ steps.publish.outputs.dev_url }}) |
+            | Workflow run | [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+
+            <sub>Rebuilt each time the plugin archive builds, without waiting for the E2E tests.</sub>
