@@ -1,0 +1,62 @@
+name: Build and attach releases
+
+# for now, release name must match exactly the plugin base file's version.
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '8.4' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, wp-cli:nightly
+          extensions: zip
+
+      - name: Get WP CLI version/platform/debug info
+        run: wp cli info
+
+      - name: Install dist-archive-command
+        run: wp package install wp-cli/dist-archive-command:@stable
+
+      - name: Run composer install
+        run: composer install --verbose
+        env:
+          COMPOSER_ALLOW_UNSAFE_PHAR_METADATA: 1 # "Refusing to parse a tar/phar archive on PHP < 8.0 because it is not safe to process untrusted archives on that PHP version."
+
+      - name: Create plugin archive
+        id: create-plugin-archive
+        run: |
+          composer create-plugin-archive
+          echo "DIST_ARCHIVE_ABSOLUTE_FILEPATH=$(pwd)/$(ls -Art dist-archive/*.zip | tail -n 1)" >> $GITHUB_OUTPUT;
+
+      - uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ steps.create-plugin-archive.outputs.DIST_ARCHIVE_ABSOLUTE_FILEPATH }}
+          gzip: false
+          allow_override: true
+
+#      - name: Unzip release archive for SVN deployment
+#        run: unzip ${{ steps.create-plugin-archive.outputs.DIST_ARCHIVE_ABSOLUTE_FILEPATH }}
+#
+#      - name: WordPress Plugin Deploy
+#        uses: 10up/action-wordpress-plugin-deploy@stable
+#        env:
+#          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+#          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+#          BUILD_DIR: ./${{ env.PLUGIN_SLUG }}

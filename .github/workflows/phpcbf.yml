@@ -11,35 +11,102 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types: [opened, synchronize, closed]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   php-codesniffer:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '8.4' ]
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Install PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '7.4'
-            tools: composer, cs2pr
+        uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, cs2pr
+          extensions: zip
 
-#      - name: Create Composer auth.json
-#        run: php -r "file_put_contents( 'auth.json', json_encode( [ 'http-basic' => [ 'blog.brianhenry.ie' => [ 'username' => '"${{ secrets.COMPOSER_AUTH_SECRET }}"', 'password' => 'satispress' ] ] ] ) );"
+      - name: Run composer install
+        run: composer install
 
-      - name: Run Composer install
-        uses: php-actions/composer@v1
+      # Provides `vendor/bin/prf`, used below to filter the checkstyle report to the PR's changed files.
+      - name: Install kamazee/pr-filter
+        run: composer require --dev kamazee/pr-filter --no-scripts
 
       - name: Run PHPCBF to fix what it can
         continue-on-error: true
         run: vendor/bin/phpcbf
 
       - name: Commit PHPCBF changes
-        uses: stefanzweifel/git-auto-commit-action@v4.1.1
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "PHPCBF"
+          before_add_hook: 'git pull'
+          commit_message: "🤖 PHPCBF"
 
-      - name: Run PHPCS to add annotations to the commit
+      - name: Run PHPCS to add annotations to the code
         continue-on-error: true
-        run: vendor/bin/phpcs -q -n --report=checkstyle | cs2pr
+        run: |
+          vendor/bin/phpcs -q --report=checkstyle > phpcs-checkstyle.xml
+          cat phpcs-checkstyle.xml
+          cat phpcs-checkstyle.xml | cs2pr
+
+      - name: Fail if there are still phpcs errors in the production code (master/main)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: vendor/bin/phpcs src -v
+
+      - name: Get the PR diff
+        id: pr_diff
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          # Slashes in the base branch name (e.g. stacked PRs based on `fix/…`)
+          # would make $FILENAME a non-existent sub-directory path, so flatten them.
+          FILENAME="${TARGET_BRANCH_REF_NAME//\//-}-${{ github.event.pull_request.head.sha }}.diff"
+          git fetch origin ${{ env.TARGET_BRANCH_REF_NAME }}:refs/remotes/origin/${{ env.TARGET_BRANCH_REF_NAME }}
+          git diff origin/${{ env.TARGET_BRANCH_REF_NAME }} > tmp.diff
+          mv tmp.diff $FILENAME
+          echo "diff_filename=$FILENAME" >> $GITHUB_OUTPUT
+        env:
+          TARGET_BRANCH_REF_NAME: ${{ github.event.pull_request.base.ref }}
+
+      - name: Filter to only phpcs errors in the modified files (pr)
+        continue-on-error: true # @see https://github.com/kamazee/pr-filter/issues/13
+        if: ${{ github.event_name == 'pull_request' }}
+        run: vendor/bin/prf filter-checkstyle ${{ env.DIFF_FILENAME }} ${{ env.CHECKSTYLE_FILENAME }} filtered-checkstyle.xml --base-path=$(pwd)
+        env:
+          DIFF_FILENAME: ${{ steps.pr_diff.outputs.diff_filename }}
+          CHECKSTYLE_FILENAME: "phpcs-checkstyle.xml"
+
+      - name: Fail on error in modified lines (pr)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: cat filtered-checkstyle.xml | cs2pr
+
+      # On PRs, print out the xml for debug.
+      - name: Debug log filtered-checkstyle.xml
+        if: ${{ failure() && github.event_name == 'pull_request' }}
+        run: cat ${{ env.CHECKSTYLE_FILENAME }}
+        env:
+          CHECKSTYLE_FILENAME: "filtered-checkstyle.xml"
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: phpcbf-artifacts-${{ github.run_id }}
+          path: |
+            phpcs-checkstyle.xml
+            filtered-checkstyle.xml
+            *.diff
+          if-no-files-found: ignore

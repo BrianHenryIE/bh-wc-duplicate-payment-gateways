@@ -1,0 +1,221 @@
+name: E2E Tests
+
+# Builds the distributable plugin zip once, then runs the Playwright end-to-end tests against that
+# zip via .wp-env.ci.json — so the tests exercise the artifact users install, not the working
+# directory — across a matrix of WordPress container PHP versions, and runs WordPress Plugin Check
+# against it.
+#
+# composer create-plugin-archive
+# WP_ENV_PHP_VERSION=8.4 npx wp-env start --config .wp-env.ci.json
+# npx playwright test
+#
+# On pull requests, the `playground-preview` job passes the zips to the reusable
+# `playground-preview.yml` workflow as soon as they are built, in parallel with the tests.
+#
+# @author BrianHenryIE
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - master
+
+jobs:
+
+  # Build the zip once and share it with every matrix leg, so all of them test identical bytes.
+  build:
+    name: Build plugin archive
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v7
+
+      # `wp dist-archive` needs the zip extension. Matches .github/workflows/release.yml, which
+      # builds the archive the same way.
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          extensions: zip
+
+      - name: Install PHP dependencies
+        run: composer install --verbose
+
+      - name: Fix auto-fixable PHP coding standards errors
+        run: vendor/bin/phpcbf
+        continue-on-error: true
+
+      # The development plugin has no build step or dependencies of its own: it autoloads via the
+      # main plugin's autoloader. Zip the directory itself so it installs as
+      # `wp-content/plugins/development-plugin/`.
+      - name: Build plugin archives
+        run: |
+          composer create-plugin-archive
+          zip -r dist-archive/development-plugin.zip development-plugin -x '*.DS_Store'
+          ls -l dist-archive
+
+      - name: Upload plugin archives
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-archives
+          path: dist-archive/*.zip
+          retention-days: 1
+          if-no-files-found: error
+
+  # Publishes the zips and comments on the pull request with a WordPress Playground link, in
+  # parallel with the tests. Skipped for pull requests from forks, whose token is read-only and
+  # so cannot push to gh-pages or comment.
+  playground-preview:
+    name: Playground preview
+    needs: build
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write # To commit the zips to gh-pages.
+      pull-requests: write # To add the comment.
+    uses: ./.github/workflows/playground-preview.yml
+    with:
+      pr-number: ${{ github.event.pull_request.number }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
+
+  # Validates the distributed bytes, in parallel with the e2e matrix.
+  # TODO: remove continue-on-error once the findings of the first runs are fixed or ignored. Until
+  # then the job reports without failing the run.
+  plugin-check:
+    name: WordPress plugin check
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true
+
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v7
+
+      - name: Download plugin archives
+        uses: actions/download-artifact@v7
+        with:
+          name: plugin-archives
+          path: dist-archive
+
+      - name: Unzip plugin archive
+        run: unzip -q dist-archive/bh-wc-duplicate-payment-gateways.*.zip -d plugin-check-build
+
+      # The action starts its own wp-env (PHP 8.3 by default), which cannot activate a plugin whose
+      # `Requires PHP` is 8.4. The action has no PHP input, but wp-env reads this variable.
+      - name: Run plugin check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: ./plugin-check-build/bh-wc-duplicate-payment-gateways
+          # `trademarks`: "bh-wc-duplicate-payment-gateways" - contains the restricted term "wc".
+          exclude-checks: |
+            trademarks
+        env:
+          WP_ENV_PHP_VERSION: 8.4
+
+  e2e:
+    name: E2E PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    strategy:
+      # One PHP version failing should not hide the results of the others.
+      fail-fast: false
+      matrix:
+        php: [ '8.4', '8.5' ]
+
+    env:
+      # Overrides the `phpVersion` in .wp-env.ci.json, i.e. the PHP the plugin runs on inside
+      # WordPress. The host PHP below stays fixed so dependency resolution does not vary too.
+      WP_ENV_PHP_VERSION: ${{ matrix.php }}
+
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+
+      # Still needed although the zip is prebuilt: wp-env's mappings point at the WordPress plugins
+      # composer installs into wp-content/plugins (WooCommerce, Query Monitor, etc.).
+      - name: Install PHP dependencies
+        run: composer install --verbose
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Download plugin archives
+        uses: actions/download-artifact@v7
+        with:
+          name: plugin-archives
+          path: dist-archive
+
+      # `wp-env start` runs tests/_wp-env/initialize-external.sh with the "ci" argument, which
+      # copies the plugin zip from dist-archive to tests/_wp-env/ and installs it with
+      # `wp plugin install`, then activates the plugins, sets the permalink structure and creates
+      # the WooCommerce fixtures and the demo duplicate. The development plugin is mounted from the working
+      # directory by .wp-env.ci.json's mappings, as in .wp-env.json.
+      - name: Start wp-env
+        run: npx wp-env start --config .wp-env.ci.json --debug
+
+      - name: Wait for WordPress to be ready
+        run: |
+          echo "Waiting for WordPress to be ready..."
+          WP_ENV_PORT=$(jq -r '.port // 8888' .wp-env.ci.json)
+          for i in {1..30}; do
+            if curl -s "http://localhost:$WP_ENV_PORT" > /dev/null; then
+              echo "WordPress is ready!"
+              break
+            fi
+            echo "Attempt $i: WordPress not ready yet..."
+            sleep 2
+          done
+
+      # Records the installed version, confirming the tests ran against the built zip.
+      - name: List plugins
+        run: npx wp-env run --config .wp-env.ci.json cli wp plugin list
+
+      # `github` for inline PR annotations, `html` because `--reporter` replaces rather than adds to
+      # the config's reporters — omitting it leaves playwright-report/ empty and the upload below
+      # finds nothing. playwright.config.ts does not set outputDir or the html reporter's folder, so
+      # both land in Playwright's defaults at the repository root.
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=github,html
+        env:
+          CI: true
+          # Specs that run WP-CLI via `wp-env run` must target the environment started above.
+          WP_ENV_CONFIG: .wp-env.ci.json
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-php-${{ matrix.php }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results-php-${{ matrix.php }}
+          path: test-results/
+          retention-days: 30
