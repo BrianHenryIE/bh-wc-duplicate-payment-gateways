@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Development_Plugin\Gateways;
 
+use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
+
 /**
  * Adds three gateways which demonstrate what can and cannot be duplicated.
  */
@@ -19,6 +21,19 @@ class Demo_Gateways {
 	 */
 	public function register_hooks(): void {
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateways' ) );
+		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $this, 'register_blocks_integration' ) );
+	}
+
+	/**
+	 * Register the demo gateway with the block checkout.
+	 *
+	 * @hooked woocommerce_blocks_payment_method_type_registration
+	 * @see \Automattic\WooCommerce\Blocks\Payments\Api::initialize_payment_method_types()
+	 *
+	 * @param PaymentMethodRegistry $payment_method_registry The block checkout's payment methods.
+	 */
+	public function register_blocks_integration( PaymentMethodRegistry $payment_method_registry ): void {
+		$payment_method_registry->register( new Demo_Gateway_Blocks() );
 	}
 
 	/**

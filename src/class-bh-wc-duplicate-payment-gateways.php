@@ -19,6 +19,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Duplicate_Gateways_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Blocks_Checkout;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway_Settings;
@@ -77,6 +78,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$this->define_woocommerce_payment_gateways_list_ui_hooks();
 		$this->define_ajax_hooks();
 		$this->define_duplicate_gateways_page_hooks();
+		$this->define_blocks_checkout_hooks();
 	}
 
 	/**
@@ -183,5 +185,15 @@ class BH_WC_Duplicate_Payment_Gateways {
 		add_action( 'admin_menu', array( $duplicate_gateways_page, 'add_submenu_page' ), 60 );
 		// Before the payments settings are printed at priority 10.
 		add_action( 'woocommerce_settings_checkout', array( $duplicate_gateways_page, 'print_link_on_payments_settings' ), 5 );
+	}
+
+	/**
+	 * Register the duplicates with the block checkout.
+	 */
+	protected function define_blocks_checkout_hooks(): void {
+
+		$blocks_checkout = new Blocks_Checkout( $this->settings );
+
+		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $blocks_checkout, 'register_duplicates' ) );
 	}
 }
