@@ -11,6 +11,7 @@
 * Fix: PHP 8.2+ "Use of "parent" in callables is deprecated".
 * Fix: only the first duplicate was returned when WooCommerce reloaded its gateways.
 * Fix: gateways which set their own id (e.g. WooCommerce's bank transfer, check, cash on delivery) could be "duplicated" via the API.
+* Fix: fatal error duplicating gateways which declare `validate_fields(): bool` (e.g. Venmo Gateway Pro).
 * Fix: duplicates of gateways from deactivated plugins could not be deleted, and caused warnings on plugins.php.
 * Security: require `manage_woocommerce` to create or delete duplicates.
 * Dev: wp-env, Playwright, development plugin with demo gateways.

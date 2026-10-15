@@ -197,6 +197,86 @@ class Payment_Gateways_WPUnit_Test extends WPTestCase {
 	}
 
 	/**
+	 * The `Gateway_n` aliases persist for the whole test run, and the other tests use `Gateway_0` and `Gateway_1` for
+	 * `Duplicable_Test_Gateway`, so pad the configs to use later aliases.
+	 *
+	 * @param array<string, array{class_name:string, new_id:string}> $configs Duplicates keyed by id, from `Gateway_2`.
+	 * @return array<string, array{class_name:string, new_id:string}>
+	 */
+	protected function after_duplicable_test_gateways( array $configs ): array {
+		return array_merge(
+			array(
+				'duplicable_test_gateway_2' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_2',
+				),
+				'duplicable_test_gateway_3' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_3',
+				),
+			),
+			$configs
+		);
+	}
+
+	/**
+	 * Gateways which declare `validate_fields(): bool`, e.g. Venmo Gateway Pro, caused a fatal error:
+	 * "Declaration of CC_Gateway_Parameter_Names_Trait::validate_fields() must be compatible with ...".
+	 *
+	 * @covers ::add_gateways
+	 */
+	public function test_add_gateways_typed_validate_fields(): void {
+
+		$sut = $this->get_sut(
+			$this->after_duplicable_test_gateways(
+				array(
+					'typed_validate_fields_test_gateway_2' => array(
+						'class_name' => Typed_Validate_Fields_Test_Gateway::class,
+						'new_id'     => 'typed_validate_fields_test_gateway_2',
+					),
+				)
+			)
+		);
+
+		$result = $sut->add_gateways( array() );
+
+		$this->assertCount( 3, $result );
+		$duplicate = $result[2];
+		$this->assertInstanceOf( Typed_Validate_Fields_Test_Gateway::class, $duplicate );
+		$this->assertEquals( 'typed_validate_fields_test_gateway_2', $duplicate->id );
+		$this->assertTrue( $duplicate->validate_fields() );
+	}
+
+	/**
+	 * A saved duplicate whose gateway's `validate_fields()` cannot be overridden (e.g. after the gateway plugin was
+	 * updated) is skipped rather than causing a fatal error on every request.
+	 *
+	 * @covers ::add_gateways
+	 */
+	public function test_add_gateways_skips_incompatible_validate_fields(): void {
+
+		$sut = $this->get_sut(
+			$this->after_duplicable_test_gateways(
+				array(
+					'typed_validate_fields_test_gateway_2' => array(
+						'class_name' => Typed_Validate_Fields_Test_Gateway::class,
+						'new_id'     => 'typed_validate_fields_test_gateway_2',
+					),
+					'void_validate_fields_gateway_2'       => array(
+						'class_name' => Void_Validate_Fields_Test_Gateway::class,
+						'new_id'     => 'void_validate_fields_gateway_2',
+					),
+				)
+			)
+		);
+
+		$result = $sut->add_gateways( array() );
+
+		$this->assertCount( 3, $result );
+		$this->assertNotContains( 'void_validate_fields_gateway_2', wp_list_pluck( $result, 'id' ) );
+	}
+
+	/**
 	 * The trait was listed in a stale `autoload-classmap.php` with a path that no longer existed; it is found by the
 	 * Alley Interactive autoloader instead.
 	 */

@@ -30,13 +30,15 @@ trait CC_Gateway_Parameter_Names_Trait {
 	/**
 	 * If the POSTed credit card fields contain the wrong gateway id, replace it with the duplicate's gateway id.
 	 *
-	 * @see \WC_Payment_Gateway_CC::form()
+	 * The `bool` return type is compatible with gateways which declare none (e.g. `WC_Payment_Gateway`) and with those
+	 * which declare `bool`; gateways whose signatures are otherwise incompatible are not duplicated.
 	 *
-	 * @return bool
+	 * @see \WC_Payment_Gateway_CC::form()
+	 * @see Gateway_Duplicability::is_validate_fields_compatible()
 	 *
 	 * @phpcs:disable WordPress.Security.NonceVerification.Missing
 	 */
-	public function validate_fields() {
+	public function validate_fields(): bool {
 
 		if ( $this instanceof WC_Payment_Gateway_CC ) {
 
@@ -67,6 +69,7 @@ trait CC_Gateway_Parameter_Names_Trait {
 			}
 		}
 
-		return parent::validate_fields();
+		// Untyped gateways may return nothing. WooCommerce ignores the return value.
+		return (bool) parent::validate_fields();
 	}
 }

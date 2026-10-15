@@ -78,6 +78,10 @@ class Payment_Gateways {
 			if ( ! class_exists( $gateway_to_copy ) || ! is_a( $gateway_to_copy, WC_Payment_Gateway::class, true ) ) {
 				continue;
 			}
+			// E.g. the gateway plugin was updated since it was duplicated. Declaring the subclass would be a fatal error.
+			if ( ! Gateway_Duplicability::is_validate_fields_compatible( $gateway_to_copy ) ) {
+				continue;
+			}
 			$alias = __NAMESPACE__ . '\Gateway_' . $index;
 			if ( ! class_exists( $alias, false ) ) {
 				class_alias( $gateway_to_copy, $alias );

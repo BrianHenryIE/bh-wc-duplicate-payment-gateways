@@ -45,4 +45,16 @@ class CC_Gateway_Parameter_Names_Trait_WPUnit_Test extends \Codeception\TestCase
 		$this->assertArrayHasKey( 'expected-id-card-number', $_POST );
 		$this->assertArrayHasKey( 'expected-id-card-expiry', $_POST );
 	}
+
+	/**
+	 * Untyped gateways may return nothing; the trait's `: bool` return type must not cause a TypeError.
+	 */
+	public function test_parent_returning_null(): void {
+
+		$sut = new class() extends Null_Returning_Validate_Fields_CC_Test_Gateway {
+			use CC_Gateway_Parameter_Names_Trait;
+		};
+
+		$this->assertFalse( $sut->validate_fields() );
+	}
 }

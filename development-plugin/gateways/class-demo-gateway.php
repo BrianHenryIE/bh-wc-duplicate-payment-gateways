@@ -73,6 +73,18 @@ class Demo_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * No fields to validate.
+	 *
+	 * Declares its return type, as modern gateways do (e.g. Venmo Gateway Pro), which duplicates must be compatible
+	 * with.
+	 *
+	 * @see \BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\CC_Gateway_Parameter_Names_Trait::validate_fields()
+	 */
+	public function validate_fields(): bool {
+		return true;
+	}
+
+	/**
 	 * Put the order on-hold and empty the cart.
 	 *
 	 * @param int $order_id The order being paid.

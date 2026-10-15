@@ -15,6 +15,8 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
 use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
 use WC_Payment_Gateway;
 
 /**
@@ -50,6 +52,49 @@ class Gateway_Duplicability {
 	}
 
 	/**
+	 * Can `CC_Gateway_Parameter_Names_Trait::validate_fields(): bool` override the gateway's `validate_fields()`.
+	 *
+	 * An incompatible declaration is a compile error, which cannot be caught, so it must be checked before the
+	 * duplicate's class is declared. Compatible: no return type, `bool`, `?bool`, `mixed`, or a union including `bool`.
+	 * Incompatible: any other return type (e.g. `void`), `final`, or any parameters.
+	 *
+	 * @see CC_Gateway_Parameter_Names_Trait::validate_fields()
+	 * @used-by Payment_Gateways::add_gateways()
+	 *
+	 * @param string $class_name The gateway class to be duplicated.
+	 */
+	public static function is_validate_fields_compatible( string $class_name ): bool {
+
+		$method = new ReflectionMethod( $class_name, 'validate_fields' );
+
+		if ( $method->isFinal() || 0 < $method->getNumberOfParameters() ) {
+			return false;
+		}
+
+		$return_type = $method->getReturnType();
+
+		if ( is_null( $return_type ) ) {
+			return true;
+		}
+
+		if ( $return_type instanceof ReflectionNamedType ) {
+			$types = array( $return_type );
+		} elseif ( $return_type instanceof \ReflectionUnionType ) {
+			$types = $return_type->getTypes();
+		} else {
+			return false;
+		}
+
+		foreach ( $types as $type ) {
+			if ( $type instanceof ReflectionNamedType && in_array( $type->getName(), array( 'bool', 'mixed' ), true ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Create a subclass of the gateway with a new id and check the id is unchanged after the parent constructor runs.
 	 *
 	 * @param WC_Payment_Gateway $gateway_to_copy A gateway we might want to duplicate.
@@ -62,6 +107,11 @@ class Gateway_Duplicability {
 
 		// We won't duplicate duplicates.
 		if ( $gateway_to_copy instanceof Gateway_Copy_Interface ) {
+			return false;
+		}
+
+		// Declaring the subclass would be a fatal error.
+		if ( ! self::is_validate_fields_compatible( get_class( $gateway_to_copy ) ) ) {
 			return false;
 		}
 
