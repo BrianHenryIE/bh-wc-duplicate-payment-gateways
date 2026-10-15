@@ -18,7 +18,7 @@ Duplicate a WooCommerce payment gateway to get another instance of it with its o
 * WooCommerce / Duplicate Gateways lists every gateway, with buttons to duplicate those that can be duplicated, and to delete duplicates.
 * Each duplicate has an admin title and admin description, shown to shop managers.
 * To stop offering a duplicate, untick its "Enable" checkbox; its orders keep its title and are still reported separately.
-* Duplicates of gateways without payment fields are available in the block checkout and the shortcode checkout.
+* Duplicates are available in the block checkout when the gateway's own block checkout integration supports them, or, for gateways without payment fields, with their title and description.
 * plugins.php links to each plugin's gateways and their duplicates.
 
 Not every gateway can be duplicated: gateways whose constructors set their own id (including WooCommerce's bank transfer, check and cash on delivery) or require arguments (e.g. WooCommerce Payments) cannot.

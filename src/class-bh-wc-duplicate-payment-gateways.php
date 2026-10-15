@@ -22,6 +22,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Blocks_Checkout;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Gateway_Integration_Duplicator;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Features;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway;
@@ -218,9 +219,10 @@ class BH_WC_Duplicate_Payment_Gateways {
 	 */
 	protected function define_blocks_checkout_hooks(): void {
 
-		$blocks_checkout = new Blocks_Checkout( $this->settings );
+		$blocks_checkout = new Blocks_Checkout( $this->settings, new Gateway_Integration_Duplicator() );
 
-		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $blocks_checkout, 'register_duplicates' ) );
+		// Late, after gateway plugins have registered their own integrations.
+		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $blocks_checkout, 'register_duplicates' ), 100 );
 	}
 
 	/**

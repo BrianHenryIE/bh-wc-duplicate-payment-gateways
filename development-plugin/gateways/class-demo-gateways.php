@@ -12,7 +12,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Development_Plugin\Gateways
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 /**
- * Adds three gateways which demonstrate what can and cannot be duplicated.
+ * Adds four gateways which demonstrate what can and cannot be duplicated.
  */
 class Demo_Gateways {
 
@@ -25,7 +25,7 @@ class Demo_Gateways {
 	}
 
 	/**
-	 * Register the demo gateway with the block checkout.
+	 * Register the demo gateways with the block checkout.
 	 *
 	 * @hooked woocommerce_blocks_payment_method_type_registration
 	 * @see \Automattic\WooCommerce\Blocks\Payments\Api::initialize_payment_method_types()
@@ -34,6 +34,12 @@ class Demo_Gateways {
 	 */
 	public function register_blocks_integration( PaymentMethodRegistry $payment_method_registry ): void {
 		$payment_method_registry->register( new Demo_Gateway_Blocks() );
+
+		// For the original only; Duplicate Payment Gateways registers a new instance of it for each duplicate.
+		$gateways = WC()->payment_gateways()->payment_gateways();
+		if ( isset( $gateways['demo_gateway_fields'] ) && $gateways['demo_gateway_fields'] instanceof Demo_Gateway_With_Fields ) {
+			$payment_method_registry->register( new Demo_Gateway_With_Fields_Blocks( $gateways['demo_gateway_fields'] ) );
+		}
 	}
 
 	/**
@@ -47,6 +53,7 @@ class Demo_Gateways {
 	 */
 	public function add_gateways( array $gateways ): array {
 		$gateways[] = Demo_Gateway::class;
+		$gateways[] = Demo_Gateway_With_Fields::class;
 		$gateways[] = new Demo_Gateway_Hardcoded_Id();
 		$gateways[] = new Demo_Gateway_With_Constructor_Arguments( 'demo_constructor_args' );
 		return $gateways;

@@ -22,7 +22,7 @@ Until an admin title is set, a duplicate's id is appended to its title in WooCom
 
 ![WooCommerce / Settings / Payments](./.wordpress-org/screenshots/payments-settings.png)
 
-Duplicates of gateways without payment fields are available in the block checkout (and the shortcode checkout):
+Duplicates are available in the block checkout (and the shortcode checkout) when the gateway's own block checkout integration supports them (see below), or, for gateways without payment fields, with their title and description:
 
 ![Block checkout](./.wordpress-org/screenshots/block-checkout.png)
 
@@ -33,6 +33,33 @@ Plugins whose gateways have been duplicated get a "Gateways" link on plugins.php
 ### Filters
 
 * `bh_wc_duplicate_payment_gateways_register_blocks_integration` `( bool $register, WC_Payment_Gateway $duplicate )` – whether to register the generic block checkout integration (title and description, no payment fields) for a duplicate. Default: when the gateway has no payment fields.
+
+### Supporting duplicates in a gateway's block checkout integration
+
+Gateway plugins register their block checkout integration (an `AbstractPaymentMethodType`) for their own gateway id, and their script calls `registerPaymentMethod()` with that id. For each duplicate, this plugin registers a new instance of the original gateway's integration, constructed with the duplicate, when:
+
+1. the integration's constructor takes the gateway (its only required parameter, typed as the gateway's class), and
+2. it sets its name from that gateway's id:
+
+```php
+public function __construct( My_Gateway $gateway ) {
+	$this->gateway = $gateway;
+	$this->name    = $gateway->id;
+}
+```
+
+Its script must then register every payment method it has data for, rather than a hardcoded name, e.g. by adding a marker to `get_payment_method_data()`:
+
+```js
+const paymentMethodData = wc.wcSettings.getSetting( 'paymentMethodData', {} );
+Object.keys( paymentMethodData )
+	.filter( ( name ) => paymentMethodData[ name ].is_my_gateway )
+	.forEach( ( name ) => registerPaymentMethod( { name, /* ...using paymentMethodData[ name ] */ } ) );
+```
+
+Payment field names should include the gateway id, so a duplicate's fields do not collide with the original's in the shortcode checkout. See the development plugin's [`Demo_Gateway_With_Fields_Blocks`](development-plugin/gateways/class-demo-gateway-with-fields-blocks.php) and [its script](development-plugin/assets/demo-gateway-with-fields-blocks.js).
+
+Alternatively, a gateway plugin can register its integration for every instance of its gateway itself; this plugin does not register one for a duplicate that already has one.
 
 ## Develop
 
@@ -56,6 +83,7 @@ npx wp-env start
 | Gateway | Id | Duplicable? |
 |---|---|---|
 | [`Demo_Gateway`](development-plugin/gateways/class-demo-gateway.php) | `demo_gateway` | Yes: it only sets `$this->id` when it is not already set. It has its own block checkout integration, as a gateway plugin would. |
+| [`Demo_Gateway_With_Fields`](development-plugin/gateways/class-demo-gateway-with-fields.php) | `demo_gateway_fields` | Yes, with its payment field in the block checkout: its block checkout integration takes its name from the gateway it is constructed with. |
 | [`Demo_Gateway_Hardcoded_Id`](development-plugin/gateways/class-demo-gateway-hardcoded-id.php) | `demo_hardcoded_id` | No: it always sets its id in its constructor. |
 | [`Demo_Gateway_With_Constructor_Arguments`](development-plugin/gateways/class-demo-gateway-with-constructor-arguments.php) | `demo_constructor_args` | No: its constructor requires arguments. |
 

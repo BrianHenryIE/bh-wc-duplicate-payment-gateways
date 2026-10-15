@@ -4,7 +4,7 @@
 
 * Add WooCommerce / Duplicate Gateways page, since WooCommerce 9.x removed the payment gateways table the duplicate/delete buttons were in.
 * Add "Gateways" link on every plugin on plugins.php that has duplicated gateways.
-* Support duplicates in the block checkout (for gateways without payment fields).
+* Support duplicates in the block checkout: with the gateway's own integration (and payment fields) when it takes its name from the gateway it is constructed with, otherwise with their title and description for gateways without payment fields.
 * Show a duplicate's id in its admin title until an admin title is set.
 * Re-enable the admin title and admin description settings for duplicates.
 * Remove "Hide on checkout": untick a duplicate's "Enable" to stop offering it. Duplicates that had it ticked are offered at checkout again until "Enable" is unticked.
