@@ -43,6 +43,15 @@ test.describe( 'Duplicate gateway settings', () => {
 		expect( gateway.method_title ).toBe( 'Demo Gateway – Phone orders' );
 	} );
 
+	test( 'until an admin title is set, the duplicate\'s id distinguishes it in WooCommerce / Settings / Payments', async ( {
+		admin,
+		page,
+	} ) => {
+		await admin.visitAdminPage( 'admin.php?page=wc-settings&tab=checkout' );
+
+		await expect( page.getByText( `Demo Gateway (${ duplicateId })` ).first() ).toBeVisible();
+	} );
+
 	test( 'the original gateway does not have the extra settings', async ( { admin, page } ) => {
 		await admin.visitAdminPage( 'admin.php?page=wc-settings&tab=checkout&section=demo_gateway' );
 

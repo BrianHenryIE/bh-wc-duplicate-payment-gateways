@@ -9,6 +9,7 @@
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Gateway_Copy_Interface;
 use WC_Payment_Gateway;
 
 /**
@@ -17,7 +18,8 @@ use WC_Payment_Gateway;
 class Payment_Gateway {
 
 	/**
-	 * If a new title has been specified for the gateway, replace the parent title.
+	 * If a new title has been specified for the gateway, replace the parent title. Otherwise, for duplicates, append
+	 * the gateway id to distinguish it from the original.
 	 * Applies in the wp-admin area (i.e. this is not the title shown to customer at checkout).
 	 *
 	 * @hooked woocommerce_gateway_method_title
@@ -33,6 +35,11 @@ class Payment_Gateway {
 
 		if ( ! empty( $new_title ) ) {
 			return $new_title;
+		}
+
+		// Otherwise the duplicate has the same title as the original in WooCommerce / Settings / Payments.
+		if ( $gateway instanceof Gateway_Copy_Interface ) {
+			return "{$method_title} ({$gateway->id})";
 		}
 
 		return $method_title;
