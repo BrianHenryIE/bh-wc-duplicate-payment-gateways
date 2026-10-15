@@ -17,7 +17,8 @@ if [ "$MODE" = "ci" ]; then
     exit 1
   fi
   echo "Installing $PLUGIN_SLUG from $(basename "$PLUGIN_ZIP")"
-  wp plugin install "$PLUGIN_ZIP" --force --activate
+  # Activated below, after WooCommerce, which its `Requires Plugins` header requires to be active first.
+  wp plugin install "$PLUGIN_ZIP" --force
 fi
 
 if [ ! -d /var/www/html/wp-content/uploads ]; then
@@ -31,6 +32,12 @@ chmod a+w /var/www/html/wp-content/uploads;
 # @see .env.testing
 echo "Creating test database for Codeception..."
 wp db query "CREATE DATABASE IF NOT EXISTS bh_wc_duplicate_payment_gateways_tests;"
+
+# WooCommerce first: the plugin's `Requires Plugins: woocommerce` header makes WordPress refuse to activate it
+# while WooCommerce is inactive, and `--all` activates alphabetically. (Locally, wp-env activates the mounted plugin
+# itself, after the plugins it requires.)
+echo "wp plugin activate woocommerce"
+wp plugin activate woocommerce
 
 echo "wp plugin activate --all"
 wp plugin activate --all
