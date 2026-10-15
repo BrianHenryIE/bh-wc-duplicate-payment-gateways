@@ -471,8 +471,10 @@ class Payment_Gateways {
 
 	/**
 	 * Each duplicate gateway has an option "hide at checkout" intended for gateways that are copied for reporting
-	 * purposes. This function removes them from the checkout.
-	 * TODO: maybe filter on is_admin rather than !is_checkout.
+	 * purposes. This function removes them everywhere except wp-admin.
+	 *
+	 * Not only when `is_checkout()`: the block checkout gets the available gateways from the Store API, where
+	 * `is_checkout()` is false, and the order-pay page and other front-end uses should not offer them either.
 	 *
 	 * @hooked woocommerce_available_payment_gateways
 	 *
@@ -486,7 +488,7 @@ class Payment_Gateways {
 	public function hide_gateways_at_checkout( array $available_gateways ): array {
 
 		// i.e. admins should be able to select the gateway when manually creating an order.
-		if ( ! is_checkout() ) {
+		if ( is_admin() && ! wp_doing_ajax() ) {
 			return $available_gateways;
 		}
 

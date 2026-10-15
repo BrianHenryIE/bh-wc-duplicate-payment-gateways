@@ -128,4 +128,69 @@ class Payment_Gateways_WPUnit_Test extends WPTestCase {
 
 		$this->assertCount( 2, $result );
 	}
+
+	/**
+	 * The block checkout gets the available gateways from the Store API, where `is_checkout()` is false, so a duplicate
+	 * set to "hide on checkout" must be removed outside wp-admin generally, not only when `is_checkout()`.
+	 *
+	 * @covers ::hide_gateways_at_checkout
+	 */
+	public function test_hide_gateways_at_checkout_in_store_api_request(): void {
+
+		$sut = $this->get_sut(
+			array(
+				'duplicable_test_gateway_hidden' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_hidden',
+				),
+			)
+		);
+
+		$duplicates = $sut->add_gateways( array() );
+		$duplicate  = $duplicates[0];
+		$this->assertInstanceOf( \WC_Payment_Gateway::class, $duplicate );
+		$duplicate->update_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'yes' );
+
+		$this->assertFalse( is_checkout() );
+		$this->assertFalse( is_admin() );
+
+		$result = $sut->hide_gateways_at_checkout(
+			array(
+				'duplicable_test_gateway'        => new Duplicable_Test_Gateway(),
+				'duplicable_test_gateway_hidden' => $duplicate,
+			)
+		);
+
+		$this->assertArrayHasKey( 'duplicable_test_gateway', $result );
+		$this->assertArrayNotHasKey( 'duplicable_test_gateway_hidden', $result );
+	}
+
+	/**
+	 * In wp-admin, e.g. when a shop manager creates an order, hidden duplicates are still available.
+	 *
+	 * @covers ::hide_gateways_at_checkout
+	 */
+	public function test_hide_gateways_at_checkout_not_in_admin(): void {
+
+		$sut = $this->get_sut(
+			array(
+				'duplicable_test_gateway_hidden' => array(
+					'class_name' => Duplicable_Test_Gateway::class,
+					'new_id'     => 'duplicable_test_gateway_hidden',
+				),
+			)
+		);
+
+		$duplicate = $sut->add_gateways( array() )[0];
+		$this->assertInstanceOf( \WC_Payment_Gateway::class, $duplicate );
+		$duplicate->update_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'yes' );
+
+		set_current_screen( 'edit-shop_order' );
+
+		$result = $sut->hide_gateways_at_checkout( array( 'duplicable_test_gateway_hidden' => $duplicate ) );
+
+		set_current_screen( 'front' );
+
+		$this->assertArrayHasKey( 'duplicable_test_gateway_hidden', $result );
+	}
 }
