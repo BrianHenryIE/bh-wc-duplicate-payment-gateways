@@ -17,6 +17,10 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Alley_Interactive\Autoloader\Autoloader;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
+
 // Prefixed dependencies, i.e. the Alley Interactive autoloader.
 require_once __DIR__ . '/vendor-prefixed/autoload.php';
 
