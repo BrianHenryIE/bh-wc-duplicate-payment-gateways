@@ -193,4 +193,12 @@ class Payment_Gateways_WPUnit_Test extends WPTestCase {
 
 		$this->assertArrayHasKey( 'duplicable_test_gateway_hidden', $result );
 	}
+
+	/**
+	 * The trait was listed in a stale `autoload-classmap.php` with a path that no longer existed; it is found by the
+	 * Alley Interactive autoloader instead.
+	 */
+	public function test_trait_is_autoloadable(): void {
+		$this->assertTrue( trait_exists( CC_Gateway_Parameter_Names_Trait::class ) );
+	}
 }
