@@ -30,3 +30,16 @@ export async function getDuplicateConfigs(
 	// An empty PHP array serialises as `[]`.
 	return Array.isArray( configs ) ? {} : configs;
 }
+
+export async function deleteDuplicate( requestUtils: RequestUtils, duplicateId: string ): Promise< void > {
+	await requestUtils.rest( { method: 'DELETE', path: `${ PATH }/${ duplicateId }` } );
+}
+
+/**
+ * A unique id per test, since the tests run in parallel against the same site.
+ *
+ * @param prefix E.g. the gateway being duplicated.
+ */
+export function uniqueDuplicateId( prefix: string ): string {
+	return `${ prefix }_${ Date.now().toString( 36 ) }${ Math.floor( Math.random() * 1000 ) }`;
+}

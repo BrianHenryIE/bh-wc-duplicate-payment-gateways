@@ -22,7 +22,7 @@ class Plugins_Page {
 	}
 
 	/**
-	 * Add link to WooCommerce/Settings/Payments page in plugins.php list.
+	 * Add link to the Duplicate Payment Gateways page in plugins.php list.
 	 *
 	 * @hooked plugin_action_links_{basename}
 	 *
@@ -32,8 +32,10 @@ class Plugins_Page {
 	 */
 	public function action_links( array $links_array ): array {
 
-		$settings_url = admin_url( 'admin.php?page=wc-settings&tab=checkout' );
-		array_unshift( $links_array, '<a href="' . $settings_url . '">Payment Gateways</a>' );
+		array_unshift(
+			$links_array,
+			'<a href="' . esc_url( Duplicate_Gateways_Page::get_url() ) . '">' . esc_html__( 'Duplicate Gateways', 'bh-wc-duplicate-payment-gateways' ) . '</a>'
+		);
 
 		return $links_array;
 	}
@@ -96,7 +98,7 @@ class Plugins_Page {
 		foreach ( $links_array as $key => $link ) {
 			if ( 1 === preg_match( '/.*href="(?<url>.*?)".*?>(?<title>.*?)</', $link, $output_array ) ) {
 
-				$querystring = wp_parse_url( $output_array['url'], PHP_URL_QUERY );
+				$querystring = (string) wp_parse_url( html_entity_decode( $output_array['url'] ), PHP_URL_QUERY );
 				$query_parts = array();
 				wp_parse_str( $querystring, $query_parts );
 
@@ -113,14 +115,7 @@ class Plugins_Page {
 
 		$plugin_slug = $slug_output_array[0];
 
-		$setting_link = add_query_arg(
-			array(
-				'page'       => 'wc-settings',
-				'tab'        => 'checkout',
-				'duplicates' => $plugin_slug,
-			),
-			admin_url( 'admin.php' )
-		);
+		$setting_link = Duplicate_Gateways_Page::get_url( $plugin_slug );
 
 		$plugin_links   = array();
 		$plugin_links[] = '<a href="' . esc_url( $setting_link ) . '">' . __( 'Gateways', 'bh-wc-duplicate-payment-gateways' ) . '</a>';

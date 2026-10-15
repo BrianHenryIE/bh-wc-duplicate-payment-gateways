@@ -9,6 +9,7 @@
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin_Assets;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Duplicate_Gateways_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes\I18n;
 
 /**
@@ -63,6 +64,26 @@ class BH_WC_Duplicate_Payment_Gateways_Integration_Test extends \Codeception\Tes
 		$this->assertNotFalse( $function_is_hooked );
 	}
 
+
+	/**
+	 * The Duplicate Gateways page is added to the WooCommerce menu, after WooCommerce adds its menu.
+	 */
+	public function test_action_admin_menu_duplicate_gateways_page(): void {
+
+		$function_is_hooked = $this->is_function_hooked_on_action( Duplicate_Gateways_Page::class, 'add_submenu_page', 'admin_menu', 60 );
+
+		$this->assertNotFalse( $function_is_hooked );
+	}
+
+	/**
+	 * The link to the Duplicate Gateways page is printed before WooCommerce / Settings / Payments.
+	 */
+	public function test_action_woocommerce_settings_checkout_link(): void {
+
+		$function_is_hooked = $this->is_function_hooked_on_action( Duplicate_Gateways_Page::class, 'print_link_on_payments_settings', 'woocommerce_settings_checkout', 5 );
+
+		$this->assertNotFalse( $function_is_hooked );
+	}
 
 	protected function is_function_hooked_on_action( string $class_type, string $method_name, string $action_name, int $expected_priority = 10 ): bool {
 

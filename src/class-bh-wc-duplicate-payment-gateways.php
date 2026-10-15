@@ -15,6 +15,7 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin_Assets;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Duplicate_Gateways_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
@@ -75,6 +76,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$this->define_payment_gateway_hooks();
 		$this->define_woocommerce_payment_gateways_list_ui_hooks();
 		$this->define_ajax_hooks();
+		$this->define_duplicate_gateways_page_hooks();
 	}
 
 	/**
@@ -168,5 +170,18 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 		add_action( 'wp_ajax_add_new_duplicate_payment_gateway', array( $ajax, 'add_new_duplicate_payment_gateway' ) );
 		add_action( 'wp_ajax_delete_duplicate_payment_gateway', array( $ajax, 'delete_duplicate_payment_gateway' ) );
+	}
+
+	/**
+	 * The WooCommerce / Duplicate Gateways page, which replaces the list table column removed in WooCommerce 9.x.
+	 */
+	protected function define_duplicate_gateways_page_hooks(): void {
+
+		$duplicate_gateways_page = new Duplicate_Gateways_Page( $this->api, $this->gateway_duplicability );
+
+		// After WooCommerce adds its menu at priority 9.
+		add_action( 'admin_menu', array( $duplicate_gateways_page, 'add_submenu_page' ), 60 );
+		// Before the payments settings are printed at priority 10.
+		add_action( 'woocommerce_settings_checkout', array( $duplicate_gateways_page, 'print_link_on_payments_settings' ), 5 );
 	}
 }
