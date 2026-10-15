@@ -83,7 +83,13 @@ class Settings implements Settings_Interface {
 			: '1.5.4';
 	}
 
-	public function get_plugin_basename() {
+	/**
+	 * The plugin's directory and main file, as defined in the main plugin file.
+	 *
+	 * @used-by Admin_Assets::enqueue_scripts()
+	 * @used-by BH_WC_Duplicate_Payment_Gateways::define_plugins_page_hooks()
+	 */
+	public function get_plugin_basename(): string {
 		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME' )
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME
 			: 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';

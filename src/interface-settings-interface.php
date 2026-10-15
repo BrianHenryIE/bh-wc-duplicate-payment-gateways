@@ -25,5 +25,8 @@ interface Settings_Interface {
 	 */
 	public function get_plugin_version(): string;
 
-	public function get_plugin_basename();
+	/**
+	 * The plugin's directory and main file, e.g. `bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php`.
+	 */
+	public function get_plugin_basename(): string;
 }

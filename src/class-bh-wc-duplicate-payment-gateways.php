@@ -116,7 +116,7 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 		$plugins_page = new Plugins_Page( $this->api );
 
-		$basename = 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
+		$basename = $this->settings->get_plugin_basename();
 
 		add_filter( "plugin_action_links_{$basename}", array( $plugins_page, 'action_links' ) );
 
