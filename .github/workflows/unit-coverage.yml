@@ -15,14 +15,16 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      # MariaDB, as wp-env uses, so CI tests against the same database as local development. (The service keeps
+      # the name `mysql`, which the steps below use for its port.)
       mysql:
-        image: mysql:8.0
+        image: mariadb:lts
         env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: bh_wc_duplicate_payment_gateways_tests
+          MARIADB_ROOT_PASSWORD: password
+          MARIADB_DATABASE: bh_wc_duplicate_payment_gateways_tests
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
 
     permissions:
       pull-requests: write # To add coverage comment
@@ -183,7 +185,7 @@ jobs:
         if: ${{ matrix.php == env.COVERAGE_PHP_VERSION && github.ref == 'refs/heads/master' }}
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          before_add_hook: 'git pull'
+          before_add_hook: 'git pull --rebase'
           file_pattern: .github/coverage.svg
           commit_message: "🤖 Commit code coverage badge"
 

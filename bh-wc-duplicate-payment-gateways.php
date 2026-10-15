@@ -15,7 +15,7 @@
  * Plugin Name:       Duplicate Payment Gateways
  * Plugin URI:        http://github.com/BrianHenryIE/bh-wc-duplicate-payment-gateways/
  * Description:       Enables multiple instances of WooCommerce payment gateways. NB: Not compatible with 100% of payment gateway plugins.
- * Version:           1.5.4
+ * Version:           1.6.0
  * Author:            BrianHenryIE
  * Author URI:        http://BrianHenry.ie/
  * License:           GPL-2.0+
@@ -23,12 +23,17 @@
  * Text Domain:       bh-wc-duplicate-payment-gateways
  * Domain Path:       /languages
  * Requires PHP:      7.4
+ * Requires Plugins:  woocommerce
+ * WC tested up to:   11.2
  */
+
+declare(strict_types=1);
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\API;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API\Settings;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 
 
 // If this file is called directly, abort.
@@ -38,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
 
-define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.5.4' );
+define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION', '1.6.0' );
 define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
@@ -52,12 +57,11 @@ define( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME', plugin_basename( __FILE__ )
  */
 function instantiate_bh_wc_duplicate_payment_gateways(): API_Interface {
 
-	$settings = new Settings();
-	$api      = new API( $settings );
+	$settings              = new Settings();
+	$gateway_duplicability = new Gateway_Duplicability();
+	$api                   = new API( $settings, $gateway_duplicability );
 
-	new BH_WC_Duplicate_Payment_Gateways( $api, $settings );
-
-	// \BH_WC_Duplicate_Payment_Gateways_SLSWC_Client::get_instance( 'https://bhwp.ie/', __FILE__ );
+	new BH_WC_Duplicate_Payment_Gateways( $api, $settings, $gateway_duplicability );
 
 	return $api;
 }

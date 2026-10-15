@@ -11,6 +11,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes;
 
 /**
@@ -35,12 +37,12 @@ class I18n {
 	 */
 	public function load_plugin_textdomain(): void {
 
+		// This is discouraged for .org plugins but this is distributed via GitHub releases.
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 		load_plugin_textdomain(
 			'bh-wc-duplicate-payment-gateways',
 			false,
 			dirname( plugin_basename( __FILE__ ), 3 ) . '/languages/'
 		);
-
 	}
-
 }

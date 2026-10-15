@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
@@ -52,7 +54,6 @@ class Admin_Assets {
 		$version = $this->settings->get_plugin_version();
 
 		wp_enqueue_style( 'bh-wc-duplicate-payment-gateways', $url, array(), $version, 'all' );
-
 	}
 
 	/**
@@ -63,8 +64,6 @@ class Admin_Assets {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts(): void {
-
-		// TODO: Only add on the payment gateways list?
 
 		$url = plugin_dir_url( $this->settings->get_plugin_basename() ) . 'assets/bh-wc-duplicate-payment-gateways-admin.js';
 
@@ -77,14 +76,9 @@ class Admin_Assets {
 		);
 		$json_data = wp_json_encode( $data, JSON_PRETTY_PRINT );
 
-		$script = <<<EOD
-var bh_wc_duplicate_payment_gateways = $json_data;
-EOD;
-
 		wp_add_inline_script(
 			$handle,
-			$script
+			'var bh_wc_duplicate_payment_gateways = ' . $json_data . ';'
 		);
 	}
-
 }

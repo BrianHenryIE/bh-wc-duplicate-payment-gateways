@@ -41,7 +41,7 @@ cache
 node_modules
 scratch
 src/vendor-prefixed/
-wp-content/
+
 wordpress
 /vendor/
 
@@ -61,3 +61,16 @@ docker_tag
 
 vendor-prefixed
 dist-archive
+
+wp-content/*
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+artifacts/storage-states/admin.json
+.phpunit.result.cache
+tests/_output/*
+!tests/_output/.gitignore
+.claude/settings.local.json
+# Copied from dist-archive by tests/_wp-env/initialize-external.sh for the CI environment.
+/tests/_wp-env/*.zip

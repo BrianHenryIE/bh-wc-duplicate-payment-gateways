@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es2018",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"lib": [ "dom", "dom.iterable", "es6" ],
+		"allowJs": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"outDir": "./build",
+		"types": [ "node" ]
+	},
+	"include": [ "tests/e2e-pw/**/*", "playwright.config.ts" ],
+	"exclude": [ "node_modules", "build" ]
+}

@@ -6,6 +6,8 @@
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes;
 
 /**
@@ -16,31 +18,24 @@ namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes;
 class I18n_WP_Unit_Test extends \Codeception\TestCase\WPTestCase {
 
 	/**
-	 * Checks if the filter run by WordPress in the load_plugin_textdomain() function is called.
+	 * Since WordPress 6.7, `load_plugin_textdomain()` only registers the path, and translations are loaded
+	 * just-in-time, so check the path was registered.
 	 *
 	 * @see load_plugin_textdomain()
+	 * @see \WP_Textdomain_Registry::set_custom_path()
 	 */
-	public function test_load_plugin_textdomain_function() {
-
-		$called        = false;
-		$actual_domain = null;
-
-		$filter = function( $locale, $domain ) use ( &$called, &$actual_domain ) {
-
-			$called        = true;
-			$actual_domain = $domain;
-
-			return $locale;
-		};
-
-		add_filter( 'plugin_locale', $filter, 10, 2 );
+	public function test_load_plugin_textdomain_function(): void {
 
 		$i18n = new I18n();
 
 		$i18n->load_plugin_textdomain();
 
-		$this->assertTrue( $called, 'plugin_locale filter not called within load_plugin_textdomain() suggesting it has not been set by the plugin.' );
-		$this->assertEquals( 'bh-wc-duplicate-payment-gateways', $actual_domain );
+		/** @var \WP_Textdomain_Registry $wp_textdomain_registry */
+		global $wp_textdomain_registry;
 
+		$custom_paths = ( new \ReflectionProperty( \WP_Textdomain_Registry::class, 'custom_paths' ) )->getValue( $wp_textdomain_registry );
+
+		$this->assertArrayHasKey( 'bh-wc-duplicate-payment-gateways', $custom_paths );
+		$this->assertStringEndsWith( '/bh-wc-duplicate-payment-gateways/languages', $custom_paths['bh-wc-duplicate-payment-gateways'] );
 	}
 }

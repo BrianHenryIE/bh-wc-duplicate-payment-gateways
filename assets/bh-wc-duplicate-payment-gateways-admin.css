@@ -1,9 +1,21 @@
 /**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
+ * Legacy (pre-WooCommerce 9.x) payment gateways list table column.
  */
-
 .duplicate-payment-gateway {
-    cursor: pointer;
-    vertical-align: bottom;
+	cursor: pointer;
+	vertical-align: bottom;
+}
+
+/**
+ * WooCommerce / Duplicate Gateways page.
+ */
+.bh-wc-duplicate-payment-gateways .column-actions .duplicate-add-form {
+	display: inline-flex;
+	gap: 4px;
+	vertical-align: top;
+}
+
+.bh-wc-duplicate-payment-gateways .column-actions .cannot-duplicate {
+	display: inline-block;
+	line-height: 30px;
 }

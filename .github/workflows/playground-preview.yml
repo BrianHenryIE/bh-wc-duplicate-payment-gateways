@@ -102,7 +102,7 @@ jobs:
         with:
           repository: gh-pages
           branch: gh-pages
-          before_add_hook: 'git pull'
+          before_add_hook: 'git pull --rebase'
           commit_message: "🤖 Commit Playground preview build"
 
       - name: Build the Playground URL

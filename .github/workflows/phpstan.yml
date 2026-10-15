@@ -70,7 +70,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         if: ${{ matrix.php == '8.4' && github.event_name != 'pull_request' }}
         with:
-          before_add_hook: 'git pull'
+          before_add_hook: 'git pull --rebase'
           file_pattern: ".github/phpstan.svg"
           commit_message: "🤖 PhpStan"
 

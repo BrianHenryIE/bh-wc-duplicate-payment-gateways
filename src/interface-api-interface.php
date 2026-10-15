@@ -8,6 +8,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
@@ -40,5 +42,15 @@ interface API_Interface {
 	 */
 	public function delete_duplicate_payment_gateway( string $duplicate_id ): array;
 
+	/**
+	 * Given a plugin slug or basename, get its gateways and each one's duplicates.
+	 *
+	 * @used-by Plugins_Page::add_gateways_plugins_hooks()
+	 * @used-by Duplicate_Gateways_Page::print_page()
+	 *
+	 * @param string $basename_or_slug E.g. `woocommerce/woocommerce.php` or `woocommerce`.
+	 *
+	 * @return array<string,string[]> Gateway id: duplicate ids.
+	 */
 	public function get_plugin_gateways( string $basename_or_slug ): array;
 }

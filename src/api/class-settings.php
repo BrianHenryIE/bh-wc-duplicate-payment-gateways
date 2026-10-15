@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\API;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
@@ -21,7 +23,7 @@ class Settings implements Settings_Interface {
 	 *
 	 * @return array<string, array{class_name:string, new_id:string}> Keyed by duplicate gateway id.
 	 */
-	public function get_configs() :array {
+	public function get_configs(): array {
 
 		return get_option( self::OPTION_NAME, array() );
 	}
@@ -80,13 +82,18 @@ class Settings implements Settings_Interface {
 	public function get_plugin_version(): string {
 		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION' )
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION
-			: '1.5.4';
+			: '1.6.0';
 	}
 
-	public function get_plugin_basename() {
+	/**
+	 * The plugin's directory and main file, as defined in the main plugin file.
+	 *
+	 * @used-by Admin_Assets::enqueue_scripts()
+	 * @used-by BH_WC_Duplicate_Payment_Gateways::define_plugins_page_hooks()
+	 */
+	public function get_plugin_basename(): string {
 		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME' )
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_BASENAME
 			: 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
 	}
-
 }

@@ -11,13 +11,20 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Admin_Assets;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\AJAX;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Duplicate_Gateways_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin\Plugins_Page;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Blocks_Checkout;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Blocks\Gateway_Integration_Duplicator;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Features;
+use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Gateway_Duplicability;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateway_Settings;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways;
@@ -40,9 +47,26 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes\I18n;
  */
 class BH_WC_Duplicate_Payment_Gateways {
 
+	/**
+	 * The saved duplicates and plugin metadata.
+	 *
+	 * @var Settings_Interface
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * The main functions to create and delete duplicates.
+	 *
+	 * @var API_Interface
+	 */
 	protected API_Interface $api;
+
+	/**
+	 * Checks can a gateway be duplicated.
+	 *
+	 * @var Gateway_Duplicability
+	 */
+	protected Gateway_Duplicability $gateway_duplicability;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -52,11 +76,16 @@ class BH_WC_Duplicate_Payment_Gateways {
 	 * the frontend-facing side of the site.
 	 *
 	 * @since    1.0.0
+	 *
+	 * @param API_Interface         $api The main functions to create and delete duplicates.
+	 * @param Settings_Interface    $settings The saved duplicates and plugin metadata.
+	 * @param Gateway_Duplicability $gateway_duplicability Checks can a gateway be duplicated.
 	 */
-	public function __construct( API_Interface $api, Settings_Interface $settings ) {
+	public function __construct( API_Interface $api, Settings_Interface $settings, Gateway_Duplicability $gateway_duplicability ) {
 
-		$this->settings = $settings;
-		$this->api      = $api;
+		$this->settings              = $settings;
+		$this->api                   = $api;
+		$this->gateway_duplicability = $gateway_duplicability;
 
 		$this->set_locale();
 
@@ -68,6 +97,9 @@ class BH_WC_Duplicate_Payment_Gateways {
 		$this->define_payment_gateway_hooks();
 		$this->define_woocommerce_payment_gateways_list_ui_hooks();
 		$this->define_ajax_hooks();
+		$this->define_duplicate_gateways_page_hooks();
+		$this->define_blocks_checkout_hooks();
+		$this->define_features_hooks();
 	}
 
 	/**
@@ -101,11 +133,14 @@ class BH_WC_Duplicate_Payment_Gateways {
 		add_action( 'admin_enqueue_scripts', array( $admin, 'enqueue_scripts' ) );
 	}
 
+	/**
+	 * Links on plugins.php.
+	 */
 	protected function define_plugins_page_hooks(): void {
 
 		$plugins_page = new Plugins_Page( $this->api );
 
-		$basename = 'bh-wc-duplicate-payment-gateways/bh-wc-duplicate-payment-gateways.php';
+		$basename = $this->settings->get_plugin_basename();
 
 		add_filter( "plugin_action_links_{$basename}", array( $plugins_page, 'action_links' ) );
 
@@ -113,21 +148,29 @@ class BH_WC_Duplicate_Payment_Gateways {
 	}
 
 
+	/**
+	 * Add the duplicates to WooCommerce's gateways.
+	 */
 	protected function define_add_payment_gateways_hooks(): void {
 
 		$payment_gateways = new Payment_Gateways( $this->settings );
 
 		add_filter( 'woocommerce_payment_gateways', array( $payment_gateways, 'add_gateways' ) );
-		add_filter( 'woocommerce_available_payment_gateways', array( $payment_gateways, 'hide_gateways_at_checkout' ) );
 	}
 
+	/**
+	 * Add the admin title and admin description settings to each duplicate.
+	 */
 	protected function define_add_new_gateway_settings_hooks(): void {
 
 		$payment_gateway_settings = new Payment_Gateway_Settings();
 
-		// add_filter( 'woocommerce_after_register_post_type', array( $payment_gateway_settings, 'register_filter_on_each_gateway' ) );
+		add_action( 'wc_payment_gateways_initialized', array( $payment_gateway_settings, 'register_filter_on_each_gateway' ) );
 	}
 
+	/**
+	 * Use the duplicates' admin titles and descriptions.
+	 */
 	protected function define_payment_gateway_hooks(): void {
 
 		$payment_gateway = new Payment_Gateway();
@@ -136,25 +179,19 @@ class BH_WC_Duplicate_Payment_Gateways {
 		add_filter( 'woocommerce_gateway_method_description', array( $payment_gateway, 'replace_description' ), 10, 2 );
 	}
 
+	/**
+	 * The duplicate/delete column in the legacy (pre-WooCommerce 9.x) payment gateways list table.
+	 */
 	protected function define_woocommerce_payment_gateways_list_ui_hooks(): void {
 
-		$payment_gateways_list_ui = new Payment_Gateways_List_UI( $this->api );
+		$payment_gateways_list_ui = new Payment_Gateways_List_UI( $this->api, $this->gateway_duplicability );
 
 		add_filter( 'woocommerce_payment_gateways_setting_columns', array( $payment_gateways_list_ui, 'add_column' ) );
 		add_action( 'woocommerce_payment_gateways_setting_column_duplicate', array( $payment_gateways_list_ui, 'print_column_for_duplicate_ui' ) );
-		add_action(
-			'admin_enqueue_scripts',
-			array(
-				$payment_gateways_list_ui,
-				'enqueue_css_to_hide_toggle_for_hidden_gateways',
-			),
-			11
-		);
-		add_filter( 'woocommerce_payment_gateways', array( $payment_gateways_list_ui, 'filter_to_only_plugin_gateways' ) );
 	}
 
 	/**
-	 * Hooks to handle the new
+	 * AJAX handlers for duplicating and deleting gateways.
 	 */
 	protected function define_ajax_hooks(): void {
 
@@ -164,4 +201,37 @@ class BH_WC_Duplicate_Payment_Gateways {
 		add_action( 'wp_ajax_delete_duplicate_payment_gateway', array( $ajax, 'delete_duplicate_payment_gateway' ) );
 	}
 
+	/**
+	 * The WooCommerce / Duplicate Gateways page, which replaces the list table column removed in WooCommerce 9.x.
+	 */
+	protected function define_duplicate_gateways_page_hooks(): void {
+
+		$duplicate_gateways_page = new Duplicate_Gateways_Page( $this->api, $this->gateway_duplicability );
+
+		// After WooCommerce adds its menu at priority 9.
+		add_action( 'admin_menu', array( $duplicate_gateways_page, 'add_submenu_page' ), 60 );
+		// Before the payments settings are printed at priority 10.
+		add_action( 'woocommerce_settings_checkout', array( $duplicate_gateways_page, 'print_link_on_payments_settings' ), 5 );
+	}
+
+	/**
+	 * Register the duplicates with the block checkout.
+	 */
+	protected function define_blocks_checkout_hooks(): void {
+
+		$blocks_checkout = new Blocks_Checkout( $this->settings, new Gateway_Integration_Duplicator() );
+
+		// Late, after gateway plugins have registered their own integrations.
+		add_action( 'woocommerce_blocks_payment_method_type_registration', array( $blocks_checkout, 'register_duplicates' ), 100 );
+	}
+
+	/**
+	 * Declare compatibility with WooCommerce features.
+	 */
+	protected function define_features_hooks(): void {
+
+		$features = new Features( $this->settings );
+
+		add_action( 'before_woocommerce_init', array( $features, 'declare_compatibility' ) );
+	}
 }

@@ -6,6 +6,8 @@
  * @author  BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WP_Includes;
 
 /**
@@ -19,7 +21,9 @@ class I18n_Unit_Test extends \Codeception\Test\Unit {
 		\WP_Mock::setUp();
 	}
 
-	// This is required for `'times' => 1` to be verified.
+	/**
+	 * This is required for `'times' => 1` to be verified.
+	 */
 	protected function tearDown(): void {
 		parent::_tearDown();
 		\WP_Mock::tearDown();
@@ -30,7 +34,7 @@ class I18n_Unit_Test extends \Codeception\Test\Unit {
 	 *
 	 * @covers ::load_plugin_textdomain
 	 */
-	public function test_load_plugin_textdomain() {
+	public function test_load_plugin_textdomain(): void {
 
 		global $plugin_root_dir;
 

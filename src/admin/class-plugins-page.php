@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\Admin;
 
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
@@ -14,15 +16,24 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
  */
 class Plugins_Page {
 
+	/**
+	 * Used to find which plugins' gateways have been duplicated.
+	 *
+	 * @var API_Interface
+	 */
 	protected API_Interface $api;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param API_Interface $api The plugin's main functions.
+	 */
 	public function __construct( API_Interface $api ) {
-
 		$this->api = $api;
 	}
 
 	/**
-	 * Add link to WooCommerce/Settings/Payments page in plugins.php list.
+	 * Add link to the Duplicate Payment Gateways page in plugins.php list.
 	 *
 	 * @hooked plugin_action_links_{basename}
 	 *
@@ -32,8 +43,10 @@ class Plugins_Page {
 	 */
 	public function action_links( array $links_array ): array {
 
-		$settings_url = admin_url( 'admin.php?page=wc-settings&tab=checkout' );
-		array_unshift( $links_array, '<a href="' . $settings_url . '">Payment Gateways</a>' );
+		array_unshift(
+			$links_array,
+			'<a href="' . esc_url( Duplicate_Gateways_Page::get_url() ) . '">' . esc_html__( 'Duplicate Gateways', 'bh-wc-duplicate-payment-gateways' ) . '</a>'
+		);
 
 		return $links_array;
 	}
@@ -46,7 +59,7 @@ class Plugins_Page {
 	 * @see \WP_Plugins_List_Table::single_row()
 	 * @see wp-admin/includes/class-wp-plugins-list-table.php:952 `$actions = apply_filters( 'plugin_action_links', $actions, $plugin_file, $plugin_data, $context );`.
 	 *
-	 * @param array<int|string, string>  $action_links The existing plugin links (usually "Deactivate").
+	 * @param array<int|string, string>  $actions The existing plugin links (usually "Deactivate").
 	 * @param string                     $plugin_basename The plugin's directory/filename.php.
 	 * @param array<string, string|bool> $_plugin_data Associative array including PluginURI, slug, Author, Version. See `get_plugin_data()`.
 	 * @param string                     $_context     The plugin context. By default this can include 'all', 'active', 'inactive',
@@ -54,7 +67,7 @@ class Plugins_Page {
 	 *
 	 * @return array<int|string, string> The links to display below the plugin name on plugins.php.
 	 */
-	public function add_gateways_plugins_hooks( $actions, $plugin_basename, $_plugin_data, $_context ): array {
+	public function add_gateways_plugins_hooks( array $actions, string $plugin_basename, $_plugin_data, $_context ): array {
 		// While this is a filter, we're using is basically as an action, to add actions.
 
 		if ( 'woocommerce/woocommerce.php' === $plugin_basename ) {
@@ -79,11 +92,15 @@ class Plugins_Page {
 	/**
 	 * If another plugin is the plugin for a gateway that we are duplicating, add a "Gateways" link to list all the duplicates.
 	 *
-	 * @param array<int|string, string> $links_array
+	 * @hooked plugin_action_links_{basename}
+	 * @see self::add_gateways_plugins_hooks()
+	 *
+	 * @param array<int|string, string> $links_array The plugin's action links.
+	 * @param string                    $plugin_file The plugin's basename.
 	 *
 	 * @return array<int|string, string>
 	 */
-	public function modify_client_gateways_action_hooks( array $links_array, $plugin_file ): array {
+	public function modify_client_gateways_action_hooks( array $links_array, string $plugin_file ): array {
 
 		// Add a Gateways link to the list of gateways.
 		// Remove any individual gateway link
@@ -96,7 +113,7 @@ class Plugins_Page {
 		foreach ( $links_array as $key => $link ) {
 			if ( 1 === preg_match( '/.*href="(?<url>.*?)".*?>(?<title>.*?)</', $link, $output_array ) ) {
 
-				$querystring = wp_parse_url( $output_array['url'], PHP_URL_QUERY );
+				$querystring = (string) wp_parse_url( html_entity_decode( $output_array['url'] ), PHP_URL_QUERY );
 				$query_parts = array();
 				wp_parse_str( $querystring, $query_parts );
 
@@ -113,19 +130,11 @@ class Plugins_Page {
 
 		$plugin_slug = $slug_output_array[0];
 
-		$setting_link = add_query_arg(
-			array(
-				'page'       => 'wc-settings',
-				'tab'        => 'checkout',
-				'duplicates' => $plugin_slug,
-			),
-			admin_url( 'admin.php' )
-		);
+		$setting_link = Duplicate_Gateways_Page::get_url( $plugin_slug );
 
 		$plugin_links   = array();
 		$plugin_links[] = '<a href="' . esc_url( $setting_link ) . '">' . __( 'Gateways', 'bh-wc-duplicate-payment-gateways' ) . '</a>';
 
 		return array_merge( $plugin_links, $links_array );
 	}
-
 }

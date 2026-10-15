@@ -1,0 +1,25 @@
+{
+  "name": "bh-wc-duplicate-payment-gateways",
+  "version": "1.6.0",
+  "description": "Enables multiple instances of WooCommerce payment gateways.",
+  "private": true,
+  "scripts": {
+    "wp-env": "wp-env start",
+    "lint:js": "wp-scripts lint-js assets development-plugin/assets tests/e2e-pw playwright.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "author": "BrianHenryIE",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^20.0",
+    "@wordpress/e2e-test-utils-playwright": "^2.1.0",
+    "@wordpress/env": "^11.16.0",
+    "@wordpress/scripts": "^36.1.0",
+    "dotenv": "^18.0.5",
+    "typescript": "^6.0.0"
+  }
+}

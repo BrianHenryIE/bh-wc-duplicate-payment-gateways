@@ -5,6 +5,8 @@
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
 
+declare(strict_types=1);
+
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
 /**
@@ -18,6 +20,7 @@ class CC_Gateway_Parameter_Names_Trait_WPUnit_Test extends \Codeception\TestCase
 
 		$sut = new class( 'expected-id' ) extends Dummy_CC_Gateway  {
 			use CC_Gateway_Parameter_Names_Trait;
+
 			public function __construct( string $new_id ) {
 				$this->id = $new_id;
 				if ( is_callable( 'parent::__construct' ) ) {
@@ -41,7 +44,17 @@ class CC_Gateway_Parameter_Names_Trait_WPUnit_Test extends \Codeception\TestCase
 		$this->assertArrayHasKey( 'expected-id-card-cvc', $_POST );
 		$this->assertArrayHasKey( 'expected-id-card-number', $_POST );
 		$this->assertArrayHasKey( 'expected-id-card-expiry', $_POST );
-
 	}
 
+	/**
+	 * Untyped gateways may return nothing; the trait's `: bool` return type must not cause a TypeError.
+	 */
+	public function test_parent_returning_null(): void {
+
+		$sut = new class() extends Null_Returning_Validate_Fields_CC_Test_Gateway {
+			use CC_Gateway_Parameter_Names_Trait;
+		};
+
+		$this->assertFalse( $sut->validate_fields() );
+	}
 }

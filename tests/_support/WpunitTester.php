@@ -16,6 +16,9 @@
  *
  * @SuppressWarnings(PHPMD)
 */
+
+declare(strict_types=1);
+
 class WpunitTester extends \Codeception\Actor
 {
     use _generated\WpunitTesterActions;

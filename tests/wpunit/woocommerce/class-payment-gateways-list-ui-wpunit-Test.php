@@ -1,73 +1,71 @@
 <?php
+/**
+ * Tests for the (legacy, pre-WooCommerce 9.x) gateways list table column.
+ *
+ * @package brianhenryie/bh-wc-duplicate-payment-gateways
+ */
+
+declare(strict_types=1);
 
 namespace BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce;
 
-use BrianHenryIE\ColorLogger\ColorLogger;
 use BrianHenryIE\WC_Duplicate_Payment_Gateways\API_Interface;
-use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use Codeception\TestCase\WPTestCase;
-use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
 
 /**
  * @coversDefaultClass \BrianHenryIE\WC_Duplicate_Payment_Gateways\WooCommerce\Payment_Gateways_List_UI
  */
 class Payment_Gateways_List_UI_WPUnit_Test extends WPTestCase {
 
-
 	/**
-	 * @covers ::filter_to_only_bitcoin_gateways
+	 * @covers ::add_column
 	 */
-	public function test_filter_to_only_bitcoin_gateways(): void {
+	public function test_add_column_after_action(): void {
 
-		$logger   = new ColorLogger();
-		$settings = $this->makeEmpty( Settings_Interface::class );
-		$api      = $this->makeEmpty( API_Interface::class );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
-		$sut = new Payment_Gateways_List_UI( $api, $settings, $logger );
-
-		$GLOBALS['bh_wc_bitcoin_gateway'] = $this->makeEmpty( API_Interface::class );
-
-		$gateways = array(
-			new WC_Gateway_BACS(),
-			new Bitcoin_Gateway(),
-			new class() extends Bitcoin_Gateway {
-				/**
-				 * Unique id for second instance.
-				 *
-				 * @var string
-				 */
-				public $id = 'bitcoin_gateway_2';
-			},
-			'nothing',
+		$result = $sut->add_column(
+			array(
+				'sort'   => '',
+				'name'   => 'Method',
+				'action' => '',
+				'status' => 'Enabled',
+			)
 		);
 
-		// Pretend we're on the gateways list page, with parameter `class=bh-wc-bitcoin-gateway`.
-		$GLOBALS['current_tab'] = 'checkout';
-		$_GET['class']          = 'bh-wc-bitcoin-gateway';
-
-		$result = $sut->filter_to_only_bitcoin_gateways( $gateways );
-
-		$this->assertCount( 2, $result );
+		$this->assertEquals( array( 'sort', 'name', 'action', 'duplicate', 'status' ), array_keys( $result ) );
 	}
 
 	/**
-	 * @covers ::filter_to_only_bitcoin_gateways
+	 * @covers ::print_column_for_duplicate_ui
+	 * @covers ::is_safe_to_duplicate
 	 */
-	public function test_filter_to_only_bitcoin_gateways_wrong_page(): void {
+	public function test_print_column_duplicable_gateway_has_add_button(): void {
 
-		$logger   = new ColorLogger();
-		$settings = $this->makeEmpty( Settings_Interface::class );
-		$api      = $this->makeEmpty( API_Interface::class );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
 
-		$sut = new Payment_Gateways_List_UI( $api, $settings, $logger );
+		ob_start();
+		$sut->print_column_for_duplicate_ui( new Duplicable_Test_Gateway() );
+		$output = (string) ob_get_clean();
 
-		$gateways = array(
-			new WC_Gateway_BACS(),
-			new Bitcoin_Gateway(),
-		);
+		$this->assertStringContainsString( 'duplicate-add', $output );
+	}
 
-		$result = $sut->filter_to_only_bitcoin_gateways( $gateways );
+	/**
+	 * Core gateways set `$this->id` unconditionally in their constructors, so a duplicate's id would be overwritten.
+	 *
+	 * @covers ::print_column_for_duplicate_ui
+	 * @covers ::is_safe_to_duplicate
+	 */
+	public function test_print_column_cheque_has_no_add_button(): void {
 
-		$this->assertCount( 2, $result );
+		$sut = new Payment_Gateways_List_UI( $this->makeEmpty( API_Interface::class ), new Gateway_Duplicability() );
+
+		ob_start();
+		$sut->print_column_for_duplicate_ui( new WC_Gateway_Cheque() );
+		$output = (string) ob_get_clean();
+
+		$this->assertStringNotContainsString( 'duplicate-add', $output );
 	}
 }

@@ -5,21 +5,26 @@ parameters:
         - bh-wc-duplicate-payment-gateways.php
         - autoload.php
         - uninstall.php
+        - development-plugin
+        - tests
     excludePaths:
         - vendor-prefixed
+        - tests/_support/_generated/
+        - tests/_output/
+        - tests/phpstan/
     bootstrapFiles:
         - phpstanbootstrap.php
         - autoload.php
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
-        - vendor/wp-cli/wp-cli/php/class-wp-cli-command.php
-#        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
-#        - vendor/php-stubs/woocommerce-stubs/woocommerce-packages-stubs.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
     scanFiles:
         - vendor/antecedent/patchwork/Patchwork.php
+        - tests/phpstan/class-alias-stubs.php
     scanDirectories:
         - vendor-prefixed
-        - wp-content/plugins/woocommerce
-        - vendor/wp-cli
+        - vendor/lucatume/wp-browser/src
+        - vendor/lucatume/wp-browser/includes/core-phpunit/includes
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # LoggerAwareTrait allows for null $logger, but we set it in the constructor.
         - '#LoggerInterface\|null#'
@@ -29,9 +34,14 @@ parameters:
         # - '/Parameter .* of .* expects .* given\./'
         # Setting an empty array with type associative array in the PhpDoc prints this.
         - '/does not accept default value of type array\(\)/'
-        # Because class_alias() is being used, with a variable string, the parent class is not being detected
-        - '/Anonymous class extends unknown class/'
-        - '/does not extend any class\./'
         - '/Method BrianHenryIE\\WC_Duplicate_Payment_Gateways\\WooCommerce\\Payment_Gateways::add_gateways.. should return array<string|WC_Payment_Gateway> but returns/'
         - '/Property BrianHenryIE\\WC_Duplicate_Payment_Gateways\\WooCommerce\\Payment_Gateways::\$cached_gateways .array<string, WC_Payment_Gateway>. does not accept/'
-        - '/Access to an undefined property class@anonymous.*::\$id\./'
+        # WP_Mock's AnyInstance matcher is accepted at runtime but not in its PHPDoc.
+        - '#Parameter \#2 \$callback of static method WP_Mock::expect(Action|Filter)Added\(\) expects#'
+        # The class_alias() stubs must declare a constructor, but at runtime the aliased gateway may not have one.
+        -
+            message: '#^Call to function method_exists\(\) with .*\\(Attempt_Duplicate_)?Gateway_\d+. and .__construct. will always evaluate to true\.$#'
+            identifier: function.alreadyNarrowedType
+            paths:
+                - src/woocommerce/class-payment-gateways.php
+                - src/woocommerce/class-gateway-duplicability.php
