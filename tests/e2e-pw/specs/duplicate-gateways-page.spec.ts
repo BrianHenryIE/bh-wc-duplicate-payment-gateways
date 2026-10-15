@@ -50,6 +50,16 @@ test.describe( 'Duplicate Gateways page', () => {
 		await deleteDuplicate( requestUtils, duplicateId );
 	} );
 
+	test( 'shows why duplicating failed', async ( { admin, page } ) => {
+		await admin.visitAdminPage( PAGE );
+
+		const demoGatewayRow = page.locator( 'tr[data-gateway_id="demo_gateway"]' );
+		await demoGatewayRow.getByRole( 'textbox' ).fill( 'cheque' );
+		await demoGatewayRow.getByRole( 'button', { name: 'Duplicate' } ).click();
+
+		await expect( page.getByText( 'A gateway with this id already exists.' ) ).toBeVisible();
+	} );
+
 	test( 'deletes a duplicate', async ( { admin, page, requestUtils } ) => {
 		const duplicateId = uniqueDuplicateId( 'demo_gateway' );
 		await createDuplicate( requestUtils, 'demo_gateway', duplicateId );

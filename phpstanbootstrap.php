@@ -16,3 +16,4 @@ defined( 'WP_PLUGIN_DIR' ) || define( 'WP_PLUGIN_DIR', __DIR__ . '/wp-content/pl
  * @see \Codeception\Module\WPLoader::_getConstants()
  */
 defined( 'WP_TESTS_DOMAIN' ) || define( 'WP_TESTS_DOMAIN', 'example.org' );
+defined( 'WC_ABSPATH' ) || define( 'WC_ABSPATH', __DIR__ . '/wp-content/plugins/woocommerce/' );

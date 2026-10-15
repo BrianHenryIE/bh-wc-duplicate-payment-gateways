@@ -23,6 +23,7 @@ parameters:
     scanDirectories:
         - vendor-prefixed
         - vendor/lucatume/wp-browser/src
+        - vendor/lucatume/wp-browser/includes/core-phpunit/includes
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # LoggerAwareTrait allows for null $logger, but we set it in the constructor.
