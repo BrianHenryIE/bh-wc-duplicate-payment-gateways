@@ -2,7 +2,22 @@
 
 ## 1.6.0
 
+* Add WooCommerce / Duplicate Gateways page, since WooCommerce 9.x removed the payment gateways table the duplicate/delete buttons were in.
 * Add "Gateways" link on every plugin on plugins.php that has duplicated gateways.
+* Support duplicates in the block checkout (for gateways without payment fields).
+* Show a duplicate's id in its admin title until an admin title is set.
+* Re-enable the admin title, admin description and "hide on checkout" settings for duplicates.
+* Fix: "hide on checkout" did not apply to the block checkout.
+* Fix: PHP 8.2+ "Use of "parent" in callables is deprecated".
+* Fix: only the first duplicate was returned when WooCommerce reloaded its gateways.
+* Fix: gateways which set their own id (e.g. WooCommerce's bank transfer, check, cash on delivery) could be "duplicated" via the API.
+* Fix: duplicates of gateways from deactivated plugins could not be deleted, and caused warnings on plugins.php.
+* Security: require `manage_woocommerce` to create or delete duplicates.
+* Dev: wp-env, Playwright, development plugin with demo gateways.
+
+## 1.5.4
+
+* Restructure the project; allow duplicating gateways whose constructor parameters all have default values (1.5.3).
 
 ## 1.5.3 2022-07-26
 

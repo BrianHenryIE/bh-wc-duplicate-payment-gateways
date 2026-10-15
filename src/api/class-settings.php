@@ -80,7 +80,7 @@ class Settings implements Settings_Interface {
 	public function get_plugin_version(): string {
 		return defined( 'BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION' )
 			? BH_WC_DUPLICATE_PAYMENT_GATEWAYS_VERSION
-			: '1.5.4';
+			: '1.6.0';
 	}
 
 	/**
