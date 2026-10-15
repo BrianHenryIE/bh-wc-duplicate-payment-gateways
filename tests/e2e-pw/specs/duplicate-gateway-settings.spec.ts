@@ -1,5 +1,5 @@
 /**
- * Duplicates have extra settings: an admin title, an admin description, and "hide on checkout".
+ * Duplicates have extra settings: an admin title and an admin description.
  *
  * @see src/woocommerce/class-payment-gateway-settings.php
  */
@@ -14,7 +14,6 @@ import { getPaymentGateway } from '../helpers/general/rest/wc-payment-gateways';
 import { addTestProductToCart } from '../helpers/general/ui/cart';
 
 const ADMIN_TITLE = 'bh_wc_duplicate_payment_gateways_admin_title';
-const HIDE_ON_CHECKOUT = 'bh_wc_duplicate_payment_gateways_hide_on_checkout';
 
 test.describe( 'Duplicate gateway settings', () => {
 	let duplicateId: string;
@@ -69,7 +68,7 @@ test.describe( 'Duplicate gateway settings', () => {
 		);
 
 		await expect(
-			page.locator( `#woocommerce_demo_gateway_${ HIDE_ON_CHECKOUT }` )
+			page.locator( `#woocommerce_demo_gateway_${ ADMIN_TITLE }` )
 		).toHaveCount( 0 );
 	} );
 
@@ -88,27 +87,5 @@ test.describe( 'Duplicate gateway settings', () => {
 		await expect(
 			page.getByText( `Visible ${ duplicateId }` )
 		).toBeVisible();
-	} );
-
-	test( '"hide on checkout" removes the duplicate from the (shortcode) checkout', async ( {
-		page,
-		requestUtils,
-	} ) => {
-		await updateDuplicateSettings( requestUtils, duplicateId, {
-			enabled: 'yes',
-			title: `Hidden ${ duplicateId }`,
-			[ HIDE_ON_CHECKOUT ]: 'yes',
-		} );
-
-		await addTestProductToCart( page, requestUtils );
-		await page.goto( '/checkout-shortcode/' );
-
-		// The original is still there.
-		await expect(
-			page.locator( '#payment_method_demo_gateway' )
-		).toBeAttached();
-		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount(
-			0
-		);
 	} );
 } );

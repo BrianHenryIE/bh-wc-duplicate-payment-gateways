@@ -108,49 +108,4 @@ class Payment_Gateways_List_UI {
 	protected function is_safe_to_duplicate( WC_Payment_Gateway $gateway_to_copy ): bool {
 		return $this->gateway_duplicability->is_safe_to_duplicate( $gateway_to_copy );
 	}
-
-	/**
-	 * For duplicate gateways that have the "hide on checkout" option selected, do not show a toggle on
-	 * WooCommerce/Settings/Payments list for those gateways, since the functionality of enabling/disabling
-	 * no longer show/hides the gateway at the checkout, and would be misleading to shop managers.
-	 *
-	 * @see Payment_Gateway_Settings::HIDE_ON_CHECKOUT
-	 *
-	 * @hooked admin_enqueue_scripts
-	 */
-	public function enqueue_css_to_hide_toggle_for_hidden_gateways(): void {
-
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] )
-			|| ! isset( $_GET['tab'] )
-			|| 'wc-settings' !== $_GET['page']
-			|| 'checkout' !== $_GET['tab'] ) {
-			return;
-		}
-
-		/**
-		 * All the payment gateways.
-		 *
-		 * @var array<string, WC_Payment_Gateway> $gateways
-		 */
-		$gateways = WC()->payment_gateways()->payment_gateways();
-
-		$css = '';
-
-		foreach ( $gateways as $id => $gateway ) {
-
-			if ( $gateway instanceof Gateway_Copy_Interface ) {
-				$should_hide_gateway = $gateway->get_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'no' );
-				if ( wc_string_to_bool( $should_hide_gateway ) ) {
-					$css .= "[data-gateway_id=\"{$id}\"] .woocommerce-input-toggle { display:none; }";
-				}
-			}
-		}
-
-		if ( empty( $css ) ) {
-			return;
-		}
-
-		wp_add_inline_style( 'bh-wc-duplicate-payment-gateways', $css );
-	}
 }

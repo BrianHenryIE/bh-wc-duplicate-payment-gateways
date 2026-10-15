@@ -12,9 +12,11 @@ NB: not every gateway can be duplicated. Gateways whose constructors set their o
 
 ![WooCommerce / Duplicate Gateways](./.wordpress-org/screenshots/duplicate-gateways-page.png)
 
-Each duplicate is then configured like any other gateway, under WooCommerce / Settings / Payments, with three extra settings: an admin title and admin description shown to shop managers, and "Hide on checkout" for duplicates used only for reporting/manual orders:
+Each duplicate is then configured like any other gateway, under WooCommerce / Settings / Payments, with two extra settings: an admin title and admin description shown to shop managers:
 
 ![A duplicate's settings](./.wordpress-org/screenshots/duplicate-settings.png)
+
+To stop offering a duplicate, untick its "Enable" checkbox. Its orders keep its title and are still reported separately.
 
 Until an admin title is set, a duplicate's id is appended to its title in WooCommerce / Settings / Payments, to tell it apart from the original:
 

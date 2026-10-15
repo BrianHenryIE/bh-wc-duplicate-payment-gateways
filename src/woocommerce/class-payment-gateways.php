@@ -17,7 +17,7 @@ use BrianHenryIE\WC_Duplicate_Payment_Gateways\Settings_Interface;
 use WC_Payment_Gateway;
 
 /**
- * Add the duplicates to WooCommerce's gateways; hide those set to "hide on checkout".
+ * Add the duplicates to WooCommerce's gateways.
  */
 class Payment_Gateways {
 
@@ -472,45 +472,5 @@ class Payment_Gateways {
 		}
 
 		return $gateways;
-	}
-
-
-	/**
-	 * Each duplicate gateway has an option "hide at checkout" intended for gateways that are copied for reporting
-	 * purposes. This function removes them everywhere except wp-admin.
-	 *
-	 * Not only when `is_checkout()`: the block checkout gets the available gateways from the Store API, where
-	 * `is_checkout()` is false, and the order-pay page and other front-end uses should not offer them either.
-	 *
-	 * @hooked woocommerce_available_payment_gateways
-	 *
-	 * @see \WC_Payment_Gateways::get_available_payment_gateways()
-	 * @see Payment_Gateway_Settings::HIDE_ON_CHECKOUT
-	 *
-	 * @param array<string, WC_Payment_Gateway> $available_gateways The "enabled" gateways.
-	 *
-	 * @return array<string, WC_Payment_Gateway>
-	 */
-	public function hide_gateways_at_checkout( array $available_gateways ): array {
-
-		// i.e. admins should be able to select the gateway when manually creating an order.
-		if ( is_admin() && ! wp_doing_ajax() ) {
-			return $available_gateways;
-		}
-
-		$updated_available_gateways = array();
-
-		foreach ( $available_gateways as $key => $gateway ) {
-			if ( $gateway instanceof Gateway_Copy_Interface ) {
-				$should_hide_gateway = $gateway->get_option( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, 'no' );
-				if ( ! wc_string_to_bool( $should_hide_gateway ) ) {
-					$updated_available_gateways[ $key ] = $gateway;
-				}
-			} else {
-				$updated_available_gateways[ $key ] = $gateway;
-			}
-		}
-
-		return $updated_available_gateways;
 	}
 }

@@ -57,7 +57,7 @@ export function uniqueDuplicateId( prefix: string ): string {
  *
  * @param requestUtils
  * @param duplicateId
- * @param settings     E.g. `{ enabled: 'yes', title: 'My title', bh_wc_duplicate_payment_gateways_hide_on_checkout: 'yes' }`.
+ * @param settings     E.g. `{ enabled: 'yes', title: 'My title', bh_wc_duplicate_payment_gateways_admin_title: 'My admin title' }`.
  */
 export async function updateDuplicateSettings(
 	requestUtils: RequestUtils,

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T00:27:43+00:00\n"
+"POT-Creation-Date: 2026-10-15T15:38:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 3.0.0-alpha\n"
 "X-Domain: bh-wc-duplicate-payment-gateways\n"
@@ -147,29 +147,20 @@ msgstr ""
 msgid "Gateways"
 msgstr ""
 
-#: woocommerce/class-payment-gateway-settings.php:86
+#: woocommerce/class-payment-gateway-settings.php:84
 msgid "Admin title"
 msgstr ""
 
-#: woocommerce/class-payment-gateway-settings.php:88
+#: woocommerce/class-payment-gateway-settings.php:86
 msgid "[Duplicate gateway] Change the title displayed to shop managers in the WooCommerce admin area."
 msgstr ""
 
-#: woocommerce/class-payment-gateway-settings.php:95
+#: woocommerce/class-payment-gateway-settings.php:93
 msgid "Admin description"
 msgstr ""
 
-#: woocommerce/class-payment-gateway-settings.php:97
+#: woocommerce/class-payment-gateway-settings.php:95
 msgid "[Duplicate gateway] Change the description displayed to shop managers in the WooCommerce admin area."
-msgstr ""
-
-#: woocommerce/class-payment-gateway-settings.php:104
-#: woocommerce/class-payment-gateway-settings.php:105
-msgid "Hide on checkout"
-msgstr ""
-
-#: woocommerce/class-payment-gateway-settings.php:107
-msgid "[Duplicate gateway] If this gateway is just used for reporting, you may never want it available at the checkout."
 msgstr ""
 
 #. translators: %s: The payment gateway ID.

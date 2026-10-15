@@ -1,6 +1,6 @@
 <?php
 /**
- * Duplicate gateways get extra settings: an admin title, an admin description, and "hide on checkout".
+ * Duplicate gateways get extra settings: an admin title and an admin description.
  *
  * @package brianhenryie/bh-wc-duplicate-payment-gateways
  */
@@ -42,11 +42,15 @@ class Payment_Gateway_Settings_Integration_Test extends WPTestCase {
 
 		$this->assertArrayHasKey( 'duplicable_test_gateway_settings', $gateways );
 
-		$form_fields = $gateways['duplicable_test_gateway_settings']->get_form_fields();
+		$extra_fields = array_diff_key(
+			$gateways['duplicable_test_gateway_settings']->get_form_fields(),
+			$gateways['duplicable_test_gateway']->get_form_fields()
+		);
 
-		$this->assertArrayHasKey( Payment_Gateway_Settings::ADMIN_METHOD_TITLE, $form_fields );
-		$this->assertArrayHasKey( Payment_Gateway_Settings::ADMIN_DESCRIPTION, $form_fields );
-		$this->assertArrayHasKey( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, $form_fields );
+		$this->assertEqualsCanonicalizing(
+			array( Payment_Gateway_Settings::ADMIN_METHOD_TITLE, Payment_Gateway_Settings::ADMIN_DESCRIPTION ),
+			array_keys( $extra_fields )
+		);
 	}
 
 	public function test_original_does_not_have_extra_settings_fields(): void {
@@ -55,6 +59,9 @@ class Payment_Gateway_Settings_Integration_Test extends WPTestCase {
 
 		$gateways = WC_Payment_Gateways::instance()->payment_gateways();
 
-		$this->assertArrayNotHasKey( Payment_Gateway_Settings::HIDE_ON_CHECKOUT, $gateways['duplicable_test_gateway']->get_form_fields() );
+		$form_fields = $gateways['duplicable_test_gateway']->get_form_fields();
+
+		$this->assertArrayNotHasKey( Payment_Gateway_Settings::ADMIN_METHOD_TITLE, $form_fields );
+		$this->assertArrayNotHasKey( Payment_Gateway_Settings::ADMIN_DESCRIPTION, $form_fields );
 	}
 }

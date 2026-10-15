@@ -148,18 +148,17 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 
 	/**
-	 * Add the duplicates to WooCommerce's gateways, and hide them at checkout when configured to.
+	 * Add the duplicates to WooCommerce's gateways.
 	 */
 	protected function define_add_payment_gateways_hooks(): void {
 
 		$payment_gateways = new Payment_Gateways( $this->settings );
 
 		add_filter( 'woocommerce_payment_gateways', array( $payment_gateways, 'add_gateways' ) );
-		add_filter( 'woocommerce_available_payment_gateways', array( $payment_gateways, 'hide_gateways_at_checkout' ) );
 	}
 
 	/**
-	 * Add the admin title, admin description and hide on checkout settings to each duplicate.
+	 * Add the admin title and admin description settings to each duplicate.
 	 */
 	protected function define_add_new_gateway_settings_hooks(): void {
 
@@ -188,14 +187,6 @@ class BH_WC_Duplicate_Payment_Gateways {
 
 		add_filter( 'woocommerce_payment_gateways_setting_columns', array( $payment_gateways_list_ui, 'add_column' ) );
 		add_action( 'woocommerce_payment_gateways_setting_column_duplicate', array( $payment_gateways_list_ui, 'print_column_for_duplicate_ui' ) );
-		add_action(
-			'admin_enqueue_scripts',
-			array(
-				$payment_gateways_list_ui,
-				'enqueue_css_to_hide_toggle_for_hidden_gateways',
-			),
-			11
-		);
 	}
 
 	/**

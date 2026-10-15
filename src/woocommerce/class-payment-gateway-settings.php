@@ -20,7 +20,6 @@ class Payment_Gateway_Settings {
 
 	const ADMIN_METHOD_TITLE = 'bh_wc_duplicate_payment_gateways_admin_title';
 	const ADMIN_DESCRIPTION  = 'bh_wc_duplicate_payment_gateways_admin_description';
-	const HIDE_ON_CHECKOUT   = 'bh_wc_duplicate_payment_gateways_hide_on_checkout';
 
 	/**
 	 * Gateway ids whose filters have already been added, since WooCommerce may initialize the gateways more than once.
@@ -30,8 +29,7 @@ class Payment_Gateway_Settings {
 	protected array $registered_gateway_ids = array();
 
 	/**
-	 * Filter each duplicate gateway's settings fields to add the admin title, admin description and hide on checkout
-	 * fields.
+	 * Filter each duplicate gateway's settings fields to add the admin title and admin description fields.
 	 *
 	 * Uses the `WC_Payment_Gateways` instance passed to the action, rather than `WC_Payment_Gateways::instance()`,
 	 * since the action runs inside `WC_Payment_Gateways::__construct()`, before the singleton is assigned.
@@ -100,14 +98,6 @@ class Payment_Gateway_Settings {
 			'placeholder' => wp_strip_all_tags( $gateway->method_description ),
 		);
 
-		$form_fields[ self::HIDE_ON_CHECKOUT ] = array(
-			'title'       => __( 'Hide on checkout', 'bh-wc-duplicate-payment-gateways' ),
-			'label'       => __( 'Hide on checkout', 'bh-wc-duplicate-payment-gateways' ),
-			'type'        => 'checkbox',
-			'description' => __( '[Duplicate gateway] If this gateway is just used for reporting, you may never want it available at the checkout.', 'bh-wc-duplicate-payment-gateways' ),
-			'default'     => 'no',
-		);
-
 		return $form_fields;
 	}
 
@@ -143,7 +133,6 @@ class Payment_Gateway_Settings {
 		$option_names = array(
 			self::ADMIN_METHOD_TITLE,
 			self::ADMIN_DESCRIPTION,
-			self::HIDE_ON_CHECKOUT,
 		);
 
 		foreach ( $option_names as $option_name ) {
@@ -151,11 +140,7 @@ class Payment_Gateway_Settings {
 			$posted_option_name = "woocommerce_{$gateway_id}_{$option_name}";
 
 			if ( isset( $posted[ $posted_option_name ] ) ) {
-				$option_value = $posted[ $posted_option_name ];
-				if ( self::HIDE_ON_CHECKOUT === $option_name ) {
-					$option_value = wc_bool_to_string( $option_value );
-				}
-				$gateway->update_option( $option_name, $option_value );
+				$gateway->update_option( $option_name, $posted[ $posted_option_name ] );
 			}
 		}
 	}

@@ -15,8 +15,6 @@ import {
 } from '../helpers/development-plugin/rest/duplicates';
 import { addTestProductToCart } from '../helpers/general/ui/cart';
 
-const HIDE_ON_CHECKOUT = 'bh_wc_duplicate_payment_gateways_hide_on_checkout';
-
 test.describe( 'Block checkout', () => {
 	// Check out as a guest, so the address form is always empty (a logged-in customer's saved address is collapsed).
 	test.use( { storageState: { cookies: [], origins: [] } } );
@@ -70,29 +68,5 @@ test.describe( 'Block checkout', () => {
 		expect( order.payment_method ).toBe( duplicateId );
 		// The original gateway's `process_payment()` ran.
 		expect( order.status ).toBe( 'on-hold' );
-	} );
-
-	test( '"hide on checkout" removes the duplicate from the block checkout', async ( {
-		page,
-		requestUtils,
-	} ) => {
-		await updateDuplicateSettings( requestUtils, duplicateId, {
-			enabled: 'yes',
-			title: `Hidden ${ duplicateId }`,
-			[ HIDE_ON_CHECKOUT ]: 'yes',
-		} );
-
-		await addTestProductToCart( page, requestUtils );
-		await page.goto( '/checkout-blocks/' );
-
-		// The original is listed, so the payment methods have loaded.
-		await expect(
-			page.locator(
-				'input[name="radio-control-wc-payment-method-options"][value="demo_gateway"]'
-			)
-		).toBeAttached();
-		await expect( page.getByText( `Hidden ${ duplicateId }` ) ).toHaveCount(
-			0
-		);
 	} );
 } );

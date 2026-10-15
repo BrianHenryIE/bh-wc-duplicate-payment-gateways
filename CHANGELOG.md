@@ -6,8 +6,8 @@
 * Add "Gateways" link on every plugin on plugins.php that has duplicated gateways.
 * Support duplicates in the block checkout (for gateways without payment fields).
 * Show a duplicate's id in its admin title until an admin title is set.
-* Re-enable the admin title, admin description and "hide on checkout" settings for duplicates.
-* Fix: "hide on checkout" did not apply to the block checkout.
+* Re-enable the admin title and admin description settings for duplicates.
+* Remove "Hide on checkout": untick a duplicate's "Enable" to stop offering it. Duplicates that had it ticked are offered at checkout again until "Enable" is unticked.
 * Fix: PHP 8.2+ "Use of "parent" in callables is deprecated".
 * Fix: only the first duplicate was returned when WooCommerce reloaded its gateways.
 * Fix: gateways which set their own id (e.g. WooCommerce's bank transfer, check, cash on delivery) could be "duplicated" via the API.

@@ -8,7 +8,7 @@
  * `DELETE /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates/{id}`   Delete one.
  * `POST   /wp-json/bh-wc-duplicate-payment-gateways-development/v1/duplicates/{id}/settings` {settings: {...}}
  *        Merge into the duplicate's `woocommerce_{id}_settings` option. WooCommerce's REST API only accepts the
- *        gateway's own fields, not the admin title/description/hide-on-checkout fields this plugin adds.
+ *        gateway's own fields, not the admin title/description fields this plugin adds.
  *
  * Assertions should use WooCommerce's own `/wc/v3/payment_gateways`, which lists duplicates alongside the originals.
  *
