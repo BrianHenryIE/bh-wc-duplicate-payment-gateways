@@ -144,4 +144,66 @@ class API_WPUnit_Test extends WPTestCase {
 		$this->assertArrayHasKey( 'cheque', $result );
 		$this->assertArrayHasKey( 'bacs', $result );
 	}
+
+	/**
+	 * A duplicate whose original gateway is not loaded (e.g. its plugin was deactivated) caused
+	 * "Undefined array key" warnings on every row of plugins.php.
+	 *
+	 * @covers ::get_plugin_gateways
+	 */
+	public function test_get_plugin_gateways_with_orphaned_duplicate(): void {
+
+		$settings = new Settings();
+		$settings->add_new_duplicate( 'orphan_gateway_2', 'No_Longer_Active_Gateway' );
+
+		$sut = new API( $settings, new Gateway_Duplicability() );
+
+		$warnings = array();
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
+		set_error_handler(
+			function ( int $errno, string $errstr ) use ( &$warnings ): bool {
+				$warnings[] = $errstr;
+				return true;
+			},
+			E_WARNING | E_NOTICE | E_DEPRECATED
+		);
+
+		try {
+			$result = $sut->get_plugin_gateways( 'woocommerce/woocommerce.php' );
+		} finally {
+			restore_error_handler();
+		}
+
+		$this->assertEmpty( $warnings, implode( PHP_EOL, $warnings ) );
+		$this->assertArrayHasKey( 'cheque', $result );
+	}
+
+	/**
+	 * The result was cached in a function-level `static`, shared by every instance and never updated, so newly
+	 * added duplicates were not reflected.
+	 *
+	 * @covers ::get_plugin_gateways
+	 */
+	public function test_get_plugin_gateways_reflects_new_duplicates(): void {
+
+		$settings = new Settings();
+		$sut      = new API( $settings, new Gateway_Duplicability() );
+
+		$sut->add_new_duplicate_payment_gateway( 'duplicable_test_gateway', 'duplicable_test_gateway_2' );
+		$this->reload_gateways();
+		$sut->get_plugin_gateways( 'woocommerce' );
+
+		$sut->add_new_duplicate_payment_gateway( 'duplicable_test_gateway', 'duplicable_test_gateway_3' );
+		$this->reload_gateways();
+
+		// The test gateway is not in wp-content/plugins, so derive its "slug" the same way the API does.
+		$test_gateway_file = (string) ( new \ReflectionClass( Duplicable_Test_Gateway::class ) )->getFileName();
+
+		$result = $sut->get_plugin_gateways( plugin_basename( $test_gateway_file ) );
+
+		$this->assertEquals(
+			array( 'duplicable_test_gateway_2', 'duplicable_test_gateway_3' ),
+			$result['duplicable_test_gateway'] ?? null
+		);
+	}
 }
